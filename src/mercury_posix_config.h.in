@@ -1,0 +1,42 @@
+/*
+ * Copyright (C) 2013 Argonne National Laboratory, Department of Energy,
+ *                    UChicago Argonne, LLC and The HDF Group.
+ * All rights reserved.
+ *
+ * The full copyright notice, including terms governing use, modification,
+ * and redistribution, is contained in the COPYING file that can be
+ * found at the root of the source code distribution tree.
+ */
+
+/* Generated file. Only edit mercury_posix_config.h.in. */
+
+#ifndef MERCURY_POSIX_CONFIG_H
+#define MERCURY_POSIX_CONFIG_H
+
+#ifdef _WIN32
+    #define HG_POSIX_ABI_IMPORT __declspec(dllimport)
+    #define HG_POSIX_ABI_EXPORT __declspec(dllexport)
+    #define HG_POSIX_ABI_HIDDEN
+#elif __GNUC__ >= 4
+    #define HG_POSIX_ABI_IMPORT __attribute__((visibility("default")))
+    #define HG_POSIX_ABI_EXPORT __attribute__((visibility("default")))
+    #define HG_POSIX_ABI_HIDDEN __attribute__((visibility("hidden")))
+#else
+    #define HG_POSIX_ABI_IMPORT
+    #define HG_POSIX_ABI_EXPORT
+    #define HG_POSIX_ABI_HIDDEN
+#endif
+
+#cmakedefine MERCURY_POSIX_BUILD_SHARED_LIBS
+
+#ifdef MERCURY_POSIX_BUILD_SHARED_LIBS
+  #ifdef mercury_posix_EXPORTS
+    #define HG_POSIX_EXPORT HG_POSIX_ABI_EXPORT
+  #else
+    #define HG_POSIX_EXPORT HG_POSIX_ABI_IMPORT
+  #endif
+#else
+  #define HG_POSIX_EXPORT
+#endif
+
+#endif /* MERCURY_POSIX_CONFIG_H */
