@@ -10,135 +10,82 @@
 
 #include "mercury_posix.h"
 #include "mercury_posix_macros.h"
+#include "mercury_posix_proc.h"
 
 #include <stdarg.h>
 
 /* 33 / 42 :) */
 
-typedef hg_uint64_t hg_size_t;
-typedef hg_int64_t  hg_ssize_t;
-#define hg_proc_hg_size_t   hg_proc_hg_uint64_t
-#define hg_proc_hg_ssize_t  hg_proc_hg_int64_t
-
-
-typedef hg_uint64_t hg_dev_t;
-typedef hg_uint32_t hg_uid_t;
-typedef hg_uint32_t hg_gid_t;
-typedef hg_uint64_t hg_ino_t;
-/* ino64 ?*/
-typedef hg_uint32_t hg_mode_t;
-typedef hg_uint64_t hg_nlink_t;
-typedef hg_int64_t  hg_off_t;
-
-#define hg_proc_hg_dev_t  hg_proc_hg_uint64_t
-#define hg_proc_hg_uid_t  hg_proc_hg_uint32_t
-#define hg_proc_hg_gid_t  hg_proc_hg_uint32_t
-#define hg_proc_hg_ino_t  hg_proc_hg_uint64_t
-/* ino64 ?*/
-#define hg_proc_hg_mode_t hg_proc_hg_uint32_t
-#define hg_proc_hg_nlink_t  hg_proc_hg_uint64_t
-#define hg_proc_hg_off_t  hg_proc_hg_int64_t
-
-typedef struct stat hg_stat_t;
-
-MERCURY_GEN_STRUCT_PROC(hg_stat_t,
-    ((hg_dev_t)(st_dev))              /* Device.  */
-    ((hg_ino_t)(st_ino))              /* File serial number.  */
-    ((hg_mode_t)(st_mode))            /* File mode.  */
-    ((hg_nlink_t)(st_nlink))          /* Link count.  */
-    ((hg_uid_t)(st_uid))              /* User ID of the file's owner. */
-    ((hg_gid_t)(st_gid))              /* Group ID of the file's group.*/
-    ((hg_dev_t)(st_rdev))             /* Device number, if device.  */
-    ((hg_off_t)(st_size))             /* Size of file, in bytes.  */
-    ((hg_blksize_t)(st_blksize))      /* Optimal block size for I/O.  */
-    ((hg_blkcnt_t)(st_blocks))        /* Number 512-byte blocks allocated. */
-//    ((hg_time_t)(st_atim))        /* Time of last access.  */
-//    ((hg_time_t)(st_mtim))        /* Time of last modification.  */
-//    ((hg_time_t)(st_ctim))        /* Time of last status change.  */
-)
-
 /* access */
-MERCURY_POSIX_GEN_RPC_STUB(access,
-        hg_int32_t,
-        (hg_const_string_t)(hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
-)
+//MERCURY_POSIX_GEN_RPC_STUB(access,
+//        hg_int32_t,
+//        (hg_const_string_t)(hg_int32_t),
+//)
 
 /* chdir */
-MERCURY_POSIX_GEN_RPC_STUB(chdir,
-        hg_int32_t,
-        (hg_const_string_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
-)
+//MERCURY_POSIX_GEN_RPC_STUB(chdir,
+//        hg_int32_t,
+//        (hg_const_string_t),
+//)
 
 /* chmod */
 MERCURY_POSIX_GEN_RPC_STUB(chmod,
         hg_int32_t,
-        (hg_const_string_t)(hg_mode_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_mode_t),
 )
 
 /* chown */
 MERCURY_POSIX_GEN_RPC_STUB(chown,
         hg_int32_t,
-        (hg_const_string_t)(hg_uid_t)(hg_gid_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_uid_t)(hg_gid_t),
 )
 
 /* creat */
 MERCURY_POSIX_GEN_RPC_STUB(creat,
         hg_int32_t,
-        (hg_const_string_t)(hg_mode_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_mode_t),
 )
 
 /* close */
 MERCURY_POSIX_GEN_RPC_STUB(close,
         hg_int32_t,
-        (hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t),
 )
 
 /* dup */
 MERCURY_POSIX_GEN_RPC_STUB(dup,
         hg_int32_t,
-        (hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t),
 )
 
 /* dup2 */
 MERCURY_POSIX_GEN_RPC_STUB(dup2,
         hg_int32_t,
-        (hg_int32_t)(hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t)(hg_int32_t),
 )
 
 /* dup3 */
-MERCURY_POSIX_GEN_RPC_STUB(dup3,
-        hg_int32_t,
-        (hg_int32_t)(hg_int32_t)(hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
-)
+//MERCURY_POSIX_GEN_RPC_STUB(dup3,
+//        hg_int32_t,
+//        (hg_int32_t)(hg_int32_t)(hg_int32_t),
+//)
 
 /* fchdir */
 MERCURY_POSIX_GEN_RPC_STUB(fchdir,
         hg_int32_t,
-        (hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t),
 )
 
 /* fchmod */
 MERCURY_POSIX_GEN_RPC_STUB(fchmod,
         hg_int32_t,
-        (hg_int32_t)(hg_mode_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t)(hg_mode_t),
 )
 
 /* fchown */
 MERCURY_POSIX_GEN_RPC_STUB(fchown,
         hg_int32_t,
-        (hg_int32_t)(hg_uid_t)(hg_gid_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t)(hg_uid_t)(hg_gid_t),
 )
 
 /**
@@ -156,22 +103,19 @@ fcntl(int fd, int cmd, ...)
 /* fpathconf */
 MERCURY_POSIX_GEN_RPC_STUB(fpathconf,
         hg_int64_t,
-        (hg_int32_t)(hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t)(hg_int32_t),
 )
 
 /* fstat */
 MERCURY_POSIX_GEN_RPC_STUB(fstat,
         hg_int32_t,
-        (hg_int32_t), (hg_stat_t),
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t), (hg_stat_t)
 )
 
 /* ftruncate */
 MERCURY_POSIX_GEN_RPC_STUB(ftruncate,
         hg_int32_t,
-        (hg_int32_t)(hg_off_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t)(hg_off_t),
 )
 
 /* getcwd */
@@ -179,7 +123,7 @@ MERCURY_POSIX_GEN_RPC_STUB(ftruncate,
 //MERCURY_POSIX_GEN_RPC_STUB(getcwd,
 //        hg_string_t,
 //        (hg_string_t)(hg_size_t), ,
-//        MERCURY_GEN_WITHOUT_BULK,
+//        MERCURY_GEN_FALSE,
 //)
 //
 //char *
@@ -200,96 +144,86 @@ getwd(char *buf)
 }
 
 /* get_current_dir_name */
-//MERCURY_GEN_PROC(get_current_dir_name_out_t, ((hg_string_t)(ret)))
-//
-//MERCURY_GEN_RPC_STUB(get_current_dir_name, hg_int32_t, -1, get_current_dir_name,
-//        (void), ,
-//        get_current_dir_name_out_t, ,
-//        MERCURY_GEN_WITHOUT_BULK, )
-//MERCURY_POSIX_GEN_RPC_STUB(get_current_dir_name,
-//        hg_int32_t,
-//        (void), ,
-//        MERCURY_GEN_WITHOUT_BULK,
-//)
-
-
-char *
-get_current_dir_name(void)
-{
-    HG_ERROR_DEFAULT("get_current_dir_name not implemented");
-    return NULL;
-}
+MERCURY_GEN_PROC(get_current_dir_name_out_t, HG_GEN_RET_PARAM(hg_string_t))
+MERCURY_GEN_RPC_STUB(get_current_dir_name, get_current_dir_name,
+        MERCURY_GEN_TRUE, hg_string_t, NULL,
+        MERCURY_GEN_FALSE, , ,
+        MERCURY_GEN_FALSE, get_current_dir_name_out_t, ,
+        MERCURY_GEN_FALSE, )
 
 /* lchown */
 MERCURY_POSIX_GEN_RPC_STUB(lchown,
         hg_int32_t,
-        (hg_const_string_t)(hg_uid_t)(hg_gid_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_uid_t)(hg_gid_t),
 )
 
 /* link */
 MERCURY_POSIX_GEN_RPC_STUB(link,
         hg_int32_t,
-        (hg_const_string_t)(hg_const_string_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_const_string_t),
 )
 
 /* lockf */
 MERCURY_POSIX_GEN_RPC_STUB(lockf,
         hg_int32_t,
-        (hg_int32_t)(hg_int32_t)(hg_off_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t)(hg_int32_t)(hg_off_t),
 )
 
 /* lseek */
 MERCURY_POSIX_GEN_RPC_STUB(lseek,
         hg_off_t,
-        (hg_int32_t)(hg_off_t)(hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_int32_t)(hg_off_t)(hg_int32_t),
 )
 
 /* lstat */
 MERCURY_POSIX_GEN_RPC_STUB(lstat,
         hg_int32_t,
-        (hg_const_string_t), (hg_stat_t),
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t), (hg_stat_t)
 )
 
 /* mkdir */
 MERCURY_POSIX_GEN_RPC_STUB(mkdir,
         hg_int32_t,
-        (hg_const_string_t)(hg_mode_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_mode_t),
 )
 
 /* mkfifo */
 MERCURY_POSIX_GEN_RPC_STUB(mkfifo,
         hg_int32_t,
-        (hg_const_string_t)(hg_mode_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_mode_t),
 )
 
 /* mknod */
 MERCURY_POSIX_GEN_RPC_STUB(mknod,
         hg_int32_t,
-        (hg_const_string_t)(hg_mode_t)(hg_dev_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_mode_t)(hg_dev_t),
 )
 
 /**
  * open
  */
-MERCURY_POSIX_GEN_RPC_STUB(hg_posix_open1,
-        hg_int32_t,
-        (hg_const_string_t)(int32_t)(uint32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
-)
+#define open_in_params ((hg_const_string_t)(pathname))((hg_int32_t)(flags))((hg_uint32_t)(mode))
 
-MERCURY_POSIX_GEN_RPC_STUB(hg_posix_open2,
-        hg_int32_t,
-        (hg_const_string_t)(int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
-)
+HG_GEN_STRUCT(open_in_t, open_in_params)
+
+static HG_INLINE int
+hg_proc_open_in_t(hg_proc_t proc, void *data)
+{
+    open_in_t *struct_data = (open_in_t *) data;
+    hg_proc_hg_const_string_t(proc, &struct_data->pathname);
+    hg_proc_hg_int32_t(proc, &struct_data->flags);
+    if (struct_data->flags & O_CREAT) {
+        hg_proc_hg_uint32_t(proc, &struct_data->mode);
+    }
+    return 1;
+}
+
+MERCURY_GEN_PROC(open_out_t, ((hg_int32_t)(ret)))
+MERCURY_GEN_RPC_STUB(hg_posix_open, open,
+        MERCURY_GEN_TRUE, hg_int32_t, -1,
+        MERCURY_GEN_TRUE, open_in_t, open_in_params,
+        MERCURY_GEN_FALSE, open_out_t, ,
+        MERCURY_GEN_FALSE, )
 
 int
 open(const char *pathname, int flags, ...)
@@ -299,9 +233,9 @@ open(const char *pathname, int flags, ...)
 
     va_start(ap, flags);
     if (flags & O_CREAT) {
-        ret = hg_posix_open1(pathname, flags, va_arg(ap, mode_t));
+        ret = hg_posix_open(pathname, flags, va_arg(ap, mode_t));
     } else {
-        ret = hg_posix_open2(pathname, flags);
+        ret = hg_posix_open(pathname, flags, 0);
     }
     va_end(ap);
 
@@ -311,8 +245,7 @@ open(const char *pathname, int flags, ...)
 /* pathconf */
 MERCURY_POSIX_GEN_RPC_STUB(pathconf,
         hg_int64_t,
-        (hg_const_string_t)(hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_int32_t),
 )
 
 /* pipe */
@@ -324,73 +257,62 @@ pipe(int fildes[2])
 }
 
 /* read */
-MERCURY_POSIX_GEN_RPC_STUB(read,
+MERCURY_POSIX_GEN_RPC_BULK_STUB(read,
         hg_ssize_t,
-        (int32_t), ,
-        MERCURY_GEN_WITH_BULK, MERCURY_GEN_PRODUCE_BULK
+        (int32_t),
+        ,
+        MERCURY_GEN_FALSE
 )
 
 /* rename */
 MERCURY_POSIX_GEN_RPC_STUB(rename,
         hg_int32_t,
-        (hg_const_string_t)(hg_const_string_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_const_string_t),
 )
 
 /* rmdir */
 MERCURY_POSIX_GEN_RPC_STUB(rmdir,
         hg_int32_t,
-        (hg_const_string_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t),
 )
 
 /* stat */
 MERCURY_POSIX_GEN_RPC_STUB(stat,
         hg_int32_t,
-        (hg_const_string_t), (hg_stat_t),
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t), (hg_stat_t)
 )
 
 /* sync */
-void
-sync(void)
-{
-    HG_ERROR_DEFAULT("sync not implemented");
-}
+MERCURY_POSIX_GEN_RPC_STUB_NOINPUT_NORET(sync)
 
 /* syncfs */
-MERCURY_POSIX_GEN_RPC_STUB(syncfs,
-        hg_int32_t,
-        (hg_int32_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
-)
+//MERCURY_POSIX_GEN_RPC_STUB(syncfs,
+//        hg_int32_t,
+//        (hg_int32_t),
+//)
 
 /* symlink */
 MERCURY_POSIX_GEN_RPC_STUB(symlink,
         hg_int32_t,
-        (hg_const_string_t)(hg_const_string_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_const_string_t),
 )
 
 /* truncate */
 MERCURY_POSIX_GEN_RPC_STUB(truncate,
         hg_int32_t,
-        (hg_const_string_t)(hg_off_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t)(hg_off_t),
 )
 
 /* umask */
 MERCURY_POSIX_GEN_RPC_STUB(umask,
         hg_mode_t,
-        (hg_mode_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_mode_t),
 )
 
 /* unlink */
 MERCURY_POSIX_GEN_RPC_STUB(unlink,
         hg_int32_t,
-        (hg_const_string_t), ,
-        MERCURY_GEN_WITHOUT_BULK,
+        (hg_const_string_t),
 )
 
 /* utime */
@@ -404,10 +326,10 @@ utime(const char *path, const struct utimbuf *times)
 /**
  * write
  */
-MERCURY_POSIX_GEN_RPC_STUB(hg_posix_write,
+MERCURY_POSIX_GEN_RPC_BULK_STUB(hg_posix_write,
         hg_ssize_t,
         (int32_t), ,
-        MERCURY_GEN_WITH_BULK, MERCURY_GEN_CONSUME_BULK
+        MERCURY_GEN_TRUE
 )
 
 ssize_t

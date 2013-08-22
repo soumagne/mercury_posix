@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 /******************************************************************************/
 int main(int argc, char *argv[])
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
     size_t n_ints = 1024*1024;
     unsigned int i;
     int error = 0;
-    int rank;
+    int rank = 0;
     ssize_t nbyte;
 
     sprintf(filename, "posix_test%d", rank);

@@ -11,47 +11,105 @@
 #ifndef MERCURY_POSIX_MACROS_H
 #define MERCURY_POSIX_MACROS_H
 
-#include "mercury_macros.h"
+#include <mercury_macros.h>
+
+/*****************************************************************************
+ * High-level BOOST macros for client stub generation
+ *****************************************************************************/
 
 /* MERCURY_POSIX_GEN_RPC_STUB */
 #define MERCURY_POSIX_GEN_RPC_STUB(func_name, ret_type, \
-        in_types, out_types, \
-        with_bulk, consume_bulk) \
+        in_types, out_types) \
+        \
+        /* Generate serialization / deserialization structs */ \
+        MERCURY_GEN_PROC(BOOST_PP_CAT(func_name, _in_t), \
+                HG_GEN_PARAM_NAME_SEQ(in_param_, in_types)) \
+        MERCURY_GEN_PROC(BOOST_PP_CAT(func_name, _out_t), \
+                HG_GEN_PARAM_NAME_SEQ(out_param_, out_types) \
+                HG_GEN_RET_PARAM(ret_type)) \
+        \
+        /* Generate rpc stub */ \
+        MERCURY_GEN_RPC_STUB(func_name, func_name, \
+                MERCURY_GEN_TRUE, ret_type, -1, \
+                MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _in_t), HG_GEN_PARAM_NAME_SEQ(in_param_, in_types), \
+                MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _out_t), HG_GEN_PARAM_NAME_SEQ(out_param_, out_types), \
+                MERCURY_GEN_FALSE, )
+
+#define MERCURY_POSIX_GEN_RPC_STUB_NOINPUT_NORET(func_name) \
+        /* Generate rpc stub */ \
+        MERCURY_GEN_RPC_STUB(func_name, func_name, \
+                MERCURY_GEN_FALSE, , , \
+                MERCURY_GEN_FALSE, , , \
+                MERCURY_GEN_FALSE, , , \
+                MERCURY_GEN_FALSE, )
+
+/* MERCURY_POSIX_GEN_RPC_BULK_STUB */
+#define MERCURY_POSIX_GEN_RPC_BULK_STUB(func_name, ret_type, \
+        in_types, out_types, bulk_read) \
         \
         /* Generate serialization / deserialization structs */ \
         MERCURY_GEN_PROC(BOOST_PP_CAT(func_name, _in_t), \
                 HG_GEN_PARAM_NAME_SEQ(in_param_, in_types) \
-                BOOST_PP_IF(with_bulk, HG_BULK_PARAM, BOOST_PP_EMPTY())) \
+                HG_BULK_PARAM) \
         MERCURY_GEN_PROC(BOOST_PP_CAT(func_name, _out_t), \
                 HG_GEN_PARAM_NAME_SEQ(out_param_, out_types) \
-                ((ret_type)(ret))) \
+                HG_GEN_RET_PARAM(ret_type)) \
         \
         /* Generate rpc stub */ \
-        MERCURY_GEN_RPC_STUB(func_name, ret_type, -1, func_name, \
-                BOOST_PP_CAT(func_name, _in_t), HG_GEN_PARAM_NAME_SEQ(in_param_, in_types), \
-                BOOST_PP_CAT(func_name, _out_t), HG_GEN_PARAM_NAME_SEQ(out_param_, out_types), \
-                with_bulk, consume_bulk)
+        MERCURY_GEN_RPC_STUB(func_name, func_name, \
+                MERCURY_GEN_TRUE, ret_type, -1, \
+                MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _in_t), HG_GEN_PARAM_NAME_SEQ(in_param_, in_types), \
+                MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _out_t), HG_GEN_PARAM_NAME_SEQ(out_param_, out_types), \
+                MERCURY_GEN_TRUE, bulk_read)
+
+/*****************************************************************************
+ * High-level BOOST macros for server stub generation
+ *****************************************************************************/
 
 /* MERCURY_POSIX_HANDLER_GEN_CALLBACK_STUB */
-#define MERCURY_POSIX_HANDLER_GEN_CALLBACK_STUB(func_name, ret_type, \
-        in_types, out_types, \
-        with_bulk, consume_bulk) \
+#define MERCURY_POSIX_GEN_CALLBACK_STUB(func_name, ret_type, \
+        in_types, out_types) \
+        \
+        /* Generate serialization / deserialization structs */ \
+        MERCURY_GEN_PROC(BOOST_PP_CAT(func_name, _in_t), \
+                HG_GEN_PARAM_NAME_SEQ(in_param_, in_types)) \
+        MERCURY_GEN_PROC(BOOST_PP_CAT(func_name, _out_t), \
+                HG_GEN_PARAM_NAME_SEQ(out_param_, out_types) \
+                HG_GEN_RET_PARAM(ret_type)) \
+        \
+        /* Generate rpc stub */ \
+        MERCURY_HANDLER_GEN_CALLBACK_STUB(BOOST_PP_CAT(func_name, _cb), func_name, \
+                MERCURY_GEN_TRUE, ret_type, \
+                MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _in_t), HG_GEN_PARAM_NAME_SEQ(in_param_, in_types), \
+                MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _out_t), HG_GEN_PARAM_NAME_SEQ(out_param_, out_types), \
+                MERCURY_GEN_FALSE, )
+
+#define MERCURY_POSIX_GEN_CALLBACK_STUB_NOINPUT_NORET(func_name) \
+        /* Generate rpc stub */ \
+        MERCURY_HANDLER_GEN_CALLBACK_STUB(BOOST_PP_CAT(func_name, _cb), func_name, \
+                MERCURY_GEN_FALSE, , \
+                MERCURY_GEN_FALSE, , , \
+                MERCURY_GEN_FALSE, , , \
+                MERCURY_GEN_FALSE, )
+
+/* MERCURY_POSIX_GEN_RPC_BULK_STUB */
+#define MERCURY_POSIX_GEN_CALLBACK_BULK_STUB(func_name, ret_type, \
+        in_types, out_types, bulk_read) \
         \
         /* Generate serialization / deserialization structs */ \
         MERCURY_GEN_PROC(BOOST_PP_CAT(func_name, _in_t), \
                 HG_GEN_PARAM_NAME_SEQ(in_param_, in_types) \
-                BOOST_PP_IF(with_bulk, HG_BULK_PARAM, BOOST_PP_EMPTY())) \
+                HG_BULK_PARAM) \
         MERCURY_GEN_PROC(BOOST_PP_CAT(func_name, _out_t), \
                 HG_GEN_PARAM_NAME_SEQ(out_param_, out_types) \
-                ((ret_type)(ret))) \
+                HG_GEN_RET_PARAM(ret_type)) \
         \
         /* Generate rpc stub */ \
-        static \
-        MERCURY_HANDLER_GEN_CALLBACK_STUB(BOOST_PP_CAT(func_name, _cb), \
-                ret_type, func_name, \
-                BOOST_PP_CAT(func_name, _in_t), HG_GEN_PARAM_NAME_SEQ(in_param_, in_types), \
-                BOOST_PP_CAT(func_name, _out_t), HG_GEN_PARAM_NAME_SEQ(out_param_, out_types), \
-                with_bulk, consume_bulk)
+        MERCURY_HANDLER_GEN_CALLBACK_STUB(BOOST_PP_CAT(func_name, _cb), func_name, \
+                MERCURY_GEN_TRUE, ret_type, \
+                MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _in_t), HG_GEN_PARAM_NAME_SEQ(in_param_, in_types), \
+                MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _out_t), HG_GEN_PARAM_NAME_SEQ(out_param_, out_types), \
+                MERCURY_GEN_TRUE, bulk_read)
 
 /* Register func_name */
 #define MERCURY_POSIX_HANDLER_REGISTER(func_name) \
@@ -59,6 +117,9 @@
                 BOOST_PP_CAT(func_name, _cb), \
                 BOOST_PP_CAT(func_name, _in_t), BOOST_PP_CAT(func_name, _out_t))
 
+/*****************************************************************************
+ * Backup (do not remove)
+ *****************************************************************************/
 #define MERCURY_GEN_CLIENT_STUB_FINALIZE() \
 void hg_finalize_server(void) \
 { \
