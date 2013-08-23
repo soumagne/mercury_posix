@@ -45,6 +45,10 @@ MERCURY_POSIX_GEN_RPC_STUB(creat,
         hg_int32_t,
         (hg_const_string_t)(hg_mode_t),
 )
+MERCURY_POSIX_GEN_RPC_STUB(creat64,
+        hg_int32_t,
+        (hg_const_string_t)(hg_mode_t),
+)
 
 /* close */
 MERCURY_POSIX_GEN_RPC_STUB(close,
@@ -65,10 +69,6 @@ MERCURY_POSIX_GEN_RPC_STUB(dup2,
 )
 
 /* dup3 */
-//MERCURY_POSIX_GEN_RPC_STUB(dup3,
-//        hg_int32_t,
-//        (hg_int32_t)(hg_int32_t)(hg_int32_t),
-//)
 
 /* fchdir */
 MERCURY_POSIX_GEN_RPC_STUB(fchdir,
@@ -91,14 +91,18 @@ MERCURY_POSIX_GEN_RPC_STUB(fchown,
 /**
  * fcntl
  */
-/*
 int
 fcntl(int fd, int cmd, ...)
 {
     HG_ERROR_DEFAULT("fcntl not implemented");
     return -1;
 }
-*/
+
+/* fdatasync */
+MERCURY_POSIX_GEN_RPC_STUB(fdatasync,
+        hg_int32_t,
+        (hg_int32_t),
+)
 
 /* fpathconf */
 MERCURY_POSIX_GEN_RPC_STUB(fpathconf,
@@ -106,10 +110,10 @@ MERCURY_POSIX_GEN_RPC_STUB(fpathconf,
         (hg_int32_t)(hg_int32_t),
 )
 
-/* fstat */
-MERCURY_POSIX_GEN_RPC_STUB(fstat,
+/* fsync */
+MERCURY_POSIX_GEN_RPC_STUB(fsync,
         hg_int32_t,
-        (hg_int32_t), (hg_stat_t)
+        (hg_int32_t),
 )
 
 /* ftruncate */
@@ -117,23 +121,23 @@ MERCURY_POSIX_GEN_RPC_STUB(ftruncate,
         hg_int32_t,
         (hg_int32_t)(hg_off_t),
 )
+MERCURY_POSIX_GEN_RPC_STUB(ftruncate64,
+        hg_int32_t,
+        (hg_int32_t)(hg_off_t),
+)
 
 /* getcwd */
-
 //MERCURY_POSIX_GEN_RPC_STUB(getcwd,
 //        hg_string_t,
 //        (hg_string_t)(hg_size_t), ,
 //        MERCURY_GEN_FALSE,
 //)
-//
-//char *
-//getcwd(char *buf, size_t size)
-//{
-//    char *ret;
-//
-//    hg_getcwd(buf, size, &ret);
-//    return ret;
-//}
+char *
+getcwd(char *buf, size_t size)
+{
+    HG_ERROR_DEFAULT("getcwd not implemented");
+    return NULL;
+}
 
 /* getwd */
 char *
@@ -144,12 +148,18 @@ getwd(char *buf)
 }
 
 /* get_current_dir_name */
-MERCURY_GEN_PROC(get_current_dir_name_out_t, HG_GEN_RET_PARAM(hg_string_t))
-MERCURY_GEN_RPC_STUB(get_current_dir_name, get_current_dir_name,
-        MERCURY_GEN_TRUE, hg_string_t, NULL,
-        MERCURY_GEN_FALSE, , ,
-        MERCURY_GEN_FALSE, get_current_dir_name_out_t, ,
-        MERCURY_GEN_FALSE, )
+//MERCURY_GEN_PROC(get_current_dir_name_out_t, HG_GEN_RET_PARAM(hg_string_t))
+//MERCURY_GEN_RPC_STUB(get_current_dir_name, get_current_dir_name,
+//        MERCURY_GEN_TRUE, hg_string_t, NULL,
+//        MERCURY_GEN_FALSE, , ,
+//        MERCURY_GEN_FALSE, get_current_dir_name_out_t, ,
+//        MERCURY_GEN_FALSE, )
+char *
+get_current_dir_name(void)
+{
+    HG_ERROR_DEFAULT("get_current_dir_name not implemented");
+    return NULL;
+}
 
 /* lchown */
 MERCURY_POSIX_GEN_RPC_STUB(lchown,
@@ -174,11 +184,9 @@ MERCURY_POSIX_GEN_RPC_STUB(lseek,
         hg_off_t,
         (hg_int32_t)(hg_off_t)(hg_int32_t),
 )
-
-/* lstat */
-MERCURY_POSIX_GEN_RPC_STUB(lstat,
-        hg_int32_t,
-        (hg_const_string_t), (hg_stat_t)
+MERCURY_POSIX_GEN_RPC_STUB(lseek64,
+        hg_off_t,
+        (hg_int32_t)(hg_off_t)(hg_int32_t),
 )
 
 /* mkdir */
@@ -231,6 +239,25 @@ open(const char *pathname, int flags, ...)
     va_list ap;
     int ret;
 
+//    printf("Calling open\n");
+    va_start(ap, flags);
+    if (flags & O_CREAT) {
+        ret = hg_posix_open(pathname, flags, va_arg(ap, mode_t));
+    } else {
+        ret = hg_posix_open(pathname, flags, 0);
+    }
+    va_end(ap);
+
+//    printf("FD RETURNED IS: %d\n", ret);
+    return ret;
+}
+
+int
+open64(const char *pathname, int flags, ...)
+{
+    va_list ap;
+    int ret;
+
     va_start(ap, flags);
     if (flags & O_CREAT) {
         ret = hg_posix_open(pathname, flags, va_arg(ap, mode_t));
@@ -256,6 +283,10 @@ pipe(int fildes[2])
     return -1;
 }
 
+/* pread */
+
+/* pwrite */
+
 /* read */
 MERCURY_POSIX_GEN_RPC_BULK_STUB(read,
         hg_ssize_t,
@@ -276,20 +307,8 @@ MERCURY_POSIX_GEN_RPC_STUB(rmdir,
         (hg_const_string_t),
 )
 
-/* stat */
-MERCURY_POSIX_GEN_RPC_STUB(stat,
-        hg_int32_t,
-        (hg_const_string_t), (hg_stat_t)
-)
-
 /* sync */
 MERCURY_POSIX_GEN_RPC_STUB_NOINPUT_NORET(sync)
-
-/* syncfs */
-//MERCURY_POSIX_GEN_RPC_STUB(syncfs,
-//        hg_int32_t,
-//        (hg_int32_t),
-//)
 
 /* symlink */
 MERCURY_POSIX_GEN_RPC_STUB(symlink,
@@ -299,6 +318,10 @@ MERCURY_POSIX_GEN_RPC_STUB(symlink,
 
 /* truncate */
 MERCURY_POSIX_GEN_RPC_STUB(truncate,
+        hg_int32_t,
+        (hg_const_string_t)(hg_off_t),
+)
+MERCURY_POSIX_GEN_RPC_STUB(truncate64,
         hg_int32_t,
         (hg_const_string_t)(hg_off_t),
 )
@@ -337,3 +360,31 @@ write(int fd, const void *buf, size_t count)
 {
     return hg_posix_write(fd, (void*)buf, count);
 }
+
+/* stat wrappers */
+MERCURY_POSIX_GEN_RPC_STUB(__fxstat,
+        hg_int32_t,
+        (hg_int32_t)(hg_int32_t), (hg_stat_t)
+)
+MERCURY_POSIX_GEN_RPC_STUB(__fxstat64,
+        hg_int32_t,
+        (hg_int32_t)(hg_int32_t), (hg_stat_t)
+)
+
+MERCURY_POSIX_GEN_RPC_STUB(__xstat,
+        hg_int32_t,
+        (hg_int32_t)(hg_const_string_t), (hg_stat_t)
+)
+MERCURY_POSIX_GEN_RPC_STUB(__xstat64,
+        hg_int32_t,
+        (hg_int32_t)(hg_const_string_t), (hg_stat_t)
+)
+
+MERCURY_POSIX_GEN_RPC_STUB(__lxstat,
+        hg_int32_t,
+        (hg_int32_t)(hg_const_string_t), (hg_stat_t)
+)
+MERCURY_POSIX_GEN_RPC_STUB(__lxstat64,
+        hg_int32_t,
+        (hg_int32_t)(hg_const_string_t), (hg_stat_t)
+)

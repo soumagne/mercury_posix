@@ -18,19 +18,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
-/* access */
-//MERCURY_POSIX_GEN_CALLBACK_STUB(access,
-//        hg_int32_t,
-//        (hg_string_t)(hg_int32_t),
-//)
-
-/* chdir */
-//MERCURY_POSIX_GEN_CALLBACK_STUB(chdir,
-//        hg_int32_t,
-//        (hg_string_t),
-//)
-
 /* chmod */
 MERCURY_POSIX_GEN_CALLBACK_STUB(chmod,
         hg_int32_t,
@@ -45,6 +32,10 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(chown,
 
 /* creat */
 MERCURY_POSIX_GEN_CALLBACK_STUB(creat,
+        hg_int32_t,
+        (hg_string_t)(hg_mode_t),
+)
+MERCURY_POSIX_GEN_CALLBACK_STUB(creat64,
         hg_int32_t,
         (hg_string_t)(hg_mode_t),
 )
@@ -67,12 +58,6 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(dup2,
         (hg_int32_t)(hg_int32_t),
 )
 
-/* dup3 */
-//MERCURY_POSIX_GEN_CALLBACK_STUB(dup3,
-//        hg_int32_t,
-//        (hg_int32_t)(hg_int32_t)(hg_int32_t),
-//)
-
 /* fchdir */
 MERCURY_POSIX_GEN_CALLBACK_STUB(fchdir,
         hg_int32_t,
@@ -91,17 +76,11 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(fchown,
         (hg_int32_t)(hg_uid_t)(hg_gid_t),
 )
 
-/**
- * fcntl
- */
-/*
-int
-fcntl(int fd, int cmd, ...)
-{
-    HG_ERROR_DEFAULT("fcntl not implemented");
-    return -1;
-}
-*/
+/* fdatasync */
+MERCURY_POSIX_GEN_CALLBACK_STUB(fdatasync,
+        hg_int32_t,
+        (hg_int32_t),
+)
 
 /* fpathconf */
 MERCURY_POSIX_GEN_CALLBACK_STUB(fpathconf,
@@ -109,10 +88,10 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(fpathconf,
         (hg_int32_t)(hg_int32_t),
 )
 
-/* fstat */
-MERCURY_POSIX_GEN_CALLBACK_STUB(fstat,
+/* fsync */
+MERCURY_POSIX_GEN_CALLBACK_STUB(fsync,
         hg_int32_t,
-        (hg_int32_t), (hg_stat_t)
+        (hg_int32_t),
 )
 
 /* ftruncate */
@@ -120,52 +99,10 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(ftruncate,
         hg_int32_t,
         (hg_int32_t)(hg_off_t),
 )
-
-/* getcwd */
-
-//MERCURY_POSIX_GEN_CALLBACK_STUB(getcwd,
-//        hg_string_t,
-//        (hg_string_t)(hg_size_t), ,
-//        MERCURY_GEN_FALSE,
-//)
-//
-//char *
-//getcwd(char *buf, size_t size)
-//{
-//    char *ret;
-//
-//    hg_getcwd(buf, size, &ret);
-//    return ret;
-//}
-
-/* getwd */
-//char *
-//getwd(char *buf)
-//{
-//    HG_ERROR_DEFAULT("getwd not implemented");
-//    return NULL;
-//}
-
-/* get_current_dir_name */
-//MERCURY_GEN_PROC(get_current_dir_name_out_t, ((hg_string_t)(ret)))
-//
-//MERCURY_GEN_RPC_STUB(get_current_dir_name, hg_int32_t, -1, get_current_dir_name,
-//        (void), ,
-//        get_current_dir_name_out_t, ,
-//        MERCURY_GEN_FALSE, )
-//MERCURY_POSIX_GEN_CALLBACK_STUB(get_current_dir_name,
-//        hg_int32_t,
-//        (void), ,
-//        MERCURY_GEN_FALSE,
-//)
-
-
-//char *
-//get_current_dir_name(void)
-//{
-//    HG_ERROR_DEFAULT("get_current_dir_name not implemented");
-//    return NULL;
-//}
+MERCURY_POSIX_GEN_CALLBACK_STUB(ftruncate64,
+        hg_int32_t,
+        (hg_int32_t)(hg_off_t),
+)
 
 /* lchown */
 MERCURY_POSIX_GEN_CALLBACK_STUB(lchown,
@@ -190,11 +127,9 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(lseek,
         hg_off_t,
         (hg_int32_t)(hg_off_t)(hg_int32_t),
 )
-
-/* lstat */
-MERCURY_POSIX_GEN_CALLBACK_STUB(lstat,
-        hg_int32_t,
-        (hg_string_t), (hg_stat_t)
+MERCURY_POSIX_GEN_CALLBACK_STUB(lseek64,
+        hg_off_t,
+        (hg_int32_t)(hg_off_t)(hg_int32_t),
 )
 
 /* mkdir */
@@ -247,14 +182,6 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(pathconf,
         (hg_string_t)(hg_int32_t),
 )
 
-/* pipe */
-//int
-//pipe(int fildes[2])
-//{
-//    HG_ERROR_DEFAULT("pipe not implemented");
-//    return -1;
-//}
-
 /* read */
 MERCURY_POSIX_GEN_CALLBACK_BULK_STUB(read,
         hg_ssize_t,
@@ -275,20 +202,8 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(rmdir,
         (hg_string_t),
 )
 
-/* stat */
-MERCURY_POSIX_GEN_CALLBACK_STUB(stat,
-        hg_int32_t,
-        (hg_string_t), (hg_stat_t)
-)
-
 /* sync */
 MERCURY_POSIX_GEN_CALLBACK_STUB_NOINPUT_NORET(sync)
-
-/* syncfs */
-//MERCURY_POSIX_GEN_CALLBACK_STUB(syncfs,
-//        hg_int32_t,
-//        (hg_int32_t),
-//)
 
 /* symlink */
 MERCURY_POSIX_GEN_CALLBACK_STUB(symlink,
@@ -298,6 +213,10 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(symlink,
 
 /* truncate */
 MERCURY_POSIX_GEN_CALLBACK_STUB(truncate,
+        hg_int32_t,
+        (hg_string_t)(hg_off_t),
+)
+MERCURY_POSIX_GEN_CALLBACK_STUB(truncate64,
         hg_int32_t,
         (hg_string_t)(hg_off_t),
 )
@@ -314,14 +233,6 @@ MERCURY_POSIX_GEN_CALLBACK_STUB(unlink,
         (hg_string_t),
 )
 
-/* utime */
-//int
-//utime(const char *path, const struct utimbuf *times)
-//{
-//    HG_ERROR_DEFAULT("utime not implemented");
-//    return -1;
-//}
-
 /**
  * write
  */
@@ -336,56 +247,87 @@ MERCURY_POSIX_GEN_CALLBACK_BULK_STUB(hg_posix_write,
         MERCURY_GEN_TRUE
 )
 
+/* stat wrappers */
+MERCURY_POSIX_GEN_CALLBACK_STUB(__fxstat,
+        hg_int32_t,
+        (hg_int32_t)(hg_int32_t), (hg_stat_t)
+)
+MERCURY_POSIX_GEN_CALLBACK_STUB(__fxstat64,
+        hg_int32_t,
+        (hg_int32_t)(hg_int32_t), (hg_stat_t)
+)
+
+MERCURY_POSIX_GEN_CALLBACK_STUB(__xstat,
+        hg_int32_t,
+        (hg_int32_t)(hg_string_t), (hg_stat_t)
+)
+MERCURY_POSIX_GEN_CALLBACK_STUB(__xstat64,
+        hg_int32_t,
+        (hg_int32_t)(hg_string_t), (hg_stat_t)
+)
+
+MERCURY_POSIX_GEN_CALLBACK_STUB(__lxstat,
+        hg_int32_t,
+        (hg_int32_t)(hg_string_t), (hg_stat_t)
+)
+MERCURY_POSIX_GEN_CALLBACK_STUB(__lxstat64,
+        hg_int32_t,
+        (hg_int32_t)(hg_string_t), (hg_stat_t)
+)
+
 /******************************************************************************/
 
+#define REGISTER_SEQ \
+    (chmod) \
+    (chown) \
+    (creat) \
+    (creat64) \
+    (close) \
+    (dup) \
+    (dup2) \
+    (fchdir) \
+    (fchmod) \
+    (fchown) \
+    (fdatasync) \
+    (fpathconf) \
+    (fsync) \
+    (ftruncate) \
+    (ftruncate64) \
+    (lchown) \
+    (link) \
+    (lockf) \
+    (lseek) \
+    (lseek64) \
+    (mkdir) \
+    (mkfifo) \
+    (mknod) \
+    (pathconf) \
+    (read) \
+    (rename) \
+    (rmdir) \
+    (symlink) \
+    (truncate) \
+    (truncate64) \
+    (umask) \
+    (unlink) \
+    (hg_posix_write) \
+    (__fxstat) \
+    (__fxstat64) \
+    (__xstat) \
+    (__xstat64) \
+    (__lxstat) \
+    (__lxstat64)
+
+#define MERCURY_POSIX_HANDLER_REGISTER_SEQ(r, data, elem) \
+    MERCURY_POSIX_HANDLER_REGISTER(elem);
 
 static void
 register_posix(void)
 {
-/* TODO symplify all this crap with a BOOST_PP_FOR */
-//    MERCURY_POSIX_HANDLER_REGISTER(access);
-//    MERCURY_POSIX_HANDLER_REGISTER(chdir);
-    MERCURY_POSIX_HANDLER_REGISTER(chmod);
-    MERCURY_POSIX_HANDLER_REGISTER(chown);
-    MERCURY_POSIX_HANDLER_REGISTER(creat);
-    MERCURY_POSIX_HANDLER_REGISTER(close);
-    MERCURY_POSIX_HANDLER_REGISTER(dup);
-    MERCURY_POSIX_HANDLER_REGISTER(dup2);
-//    MERCURY_POSIX_HANDLER_REGISTER(dup3);
-    MERCURY_POSIX_HANDLER_REGISTER(fchdir);
-    MERCURY_POSIX_HANDLER_REGISTER(fchmod);
-    MERCURY_POSIX_HANDLER_REGISTER(fchown);
-//    MERCURY_POSIX_HANDLER_REGISTER(fcntl);
-    MERCURY_POSIX_HANDLER_REGISTER(fpathconf);
-    MERCURY_POSIX_HANDLER_REGISTER(fstat);
-    MERCURY_POSIX_HANDLER_REGISTER(ftruncate);
-//    MERCURY_POSIX_HANDLER_REGISTER(getcwd);
-//    MERCURY_POSIX_HANDLER_REGISTER(getwd);
-//    MERCURY_POSIX_HANDLER_REGISTER(getcurrent_dir_name);
-    MERCURY_POSIX_HANDLER_REGISTER(lchown);
-    MERCURY_POSIX_HANDLER_REGISTER(link);
-    MERCURY_POSIX_HANDLER_REGISTER(lockf);
-    MERCURY_POSIX_HANDLER_REGISTER(lseek);
-    MERCURY_POSIX_HANDLER_REGISTER(lstat);
-    MERCURY_POSIX_HANDLER_REGISTER(mkdir);
-    MERCURY_POSIX_HANDLER_REGISTER(mkfifo);
-    MERCURY_POSIX_HANDLER_REGISTER(mknod);
-    MERCURY_HANDLER_REGISTER("open", open_cb, open_in_t, open_out_t);
-    MERCURY_POSIX_HANDLER_REGISTER(pathconf);
-//    MERCURY_POSIX_HANDLER_REGISTER(pipe);
-    MERCURY_POSIX_HANDLER_REGISTER(read);
-    MERCURY_POSIX_HANDLER_REGISTER(rename);
-    MERCURY_POSIX_HANDLER_REGISTER(rmdir);
-    MERCURY_POSIX_HANDLER_REGISTER(stat);
-    MERCURY_HANDLER_REGISTER("sync", sync_cb, void, void);
-//    MERCURY_POSIX_HANDLER_REGISTER(syncfs);
-    MERCURY_POSIX_HANDLER_REGISTER(symlink);
-    MERCURY_POSIX_HANDLER_REGISTER(truncate);
-    MERCURY_POSIX_HANDLER_REGISTER(umask);
-    MERCURY_POSIX_HANDLER_REGISTER(unlink);
-//    MERCURY_POSIX_HANDLER_REGISTER(utime);
-    MERCURY_POSIX_HANDLER_REGISTER(hg_posix_write);
+    BOOST_PP_SEQ_FOR_EACH(MERCURY_POSIX_HANDLER_REGISTER_SEQ, , REGISTER_SEQ)
 
+    MERCURY_HANDLER_REGISTER("open", open_cb, open_in_t, open_out_t);
+    MERCURY_HANDLER_REGISTER("sync", sync_cb, void, void);
 }
 
 /******************************************************************************/
