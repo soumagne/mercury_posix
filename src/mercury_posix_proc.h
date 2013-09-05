@@ -12,6 +12,7 @@
 #define MERCURY_POSIX_PROC_H
 
 #include "mercury_posix_types.h"
+
 #include <mercury_macros.h>
 
 #define hg_proc_hg_size_t    hg_proc_hg_uint64_t
@@ -21,30 +22,13 @@
 #define hg_proc_hg_uid_t     hg_proc_hg_uint32_t
 #define hg_proc_hg_gid_t     hg_proc_hg_uint32_t
 #define hg_proc_hg_ino_t     hg_proc_hg_uint64_t
-/* ino64 ?*/
+
 #define hg_proc_hg_mode_t    hg_proc_hg_uint32_t
 #define hg_proc_hg_nlink_t   hg_proc_hg_uint64_t
 #define hg_proc_hg_off_t     hg_proc_hg_int64_t
 
 #define hg_proc_hg_blksize_t hg_proc_hg_int64_t
 #define hg_proc_hg_blkcnt_t  hg_proc_hg_int64_t
-
-/* open */
-//#define open_in_params ((hg_string_t)(pathname))((hg_int32_t)(flags))((hg_uint32_t)(mode))
-//
-//HG_GEN_STRUCT(open_in_t, open_in_params)
-//static HG_INLINE int
-//hg_proc_open_in_t(hg_proc_t proc, void *data)
-//{
-//    open_in_t *struct_data = (open_in_t *) data;
-//    hg_proc_hg_string_t(proc, &struct_data->pathname);
-//    hg_proc_hg_int32_t(proc, &struct_data->flags);
-//    if (struct_data->flags & O_CREAT) {
-//        hg_proc_hg_uint32_t(proc, &struct_data->mode);
-//    }
-//    return 1;
-//}
-//MERCURY_GEN_PROC(open_out_t, ((hg_int32_t)(ret)))
 
 /* stat */
 MERCURY_GEN_STRUCT_PROC(hg_stat_t,

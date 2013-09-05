@@ -27,9 +27,13 @@
     #define HG_POSIX_ABI_HIDDEN
 #endif
 
-#cmakedefine MERCURY_POSIX_BUILD_SHARED_LIBS
+/* Define for large files (64-bit systems). */
+#cmakedefine HG_POSIX_HAS_LARGE_FILE
 
-#ifdef MERCURY_POSIX_BUILD_SHARED_LIBS
+/* Define for shared libs. */
+#cmakedefine HG_POSIX_BUILD_SHARED_LIBS
+
+#ifdef HG_POSIX_BUILD_SHARED_LIBS
   #ifdef mercury_posix_EXPORTS
     #define HG_POSIX_EXPORT HG_POSIX_ABI_EXPORT
   #else
