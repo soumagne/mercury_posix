@@ -27,6 +27,16 @@
     #define HG_POSIX_ABI_HIDDEN
 #endif
 
+/* Define for server log. */
+#define HG_POSIX_HAS_SERVER_LOG
+
+#ifdef HG_POSIX_HAS_SERVER_LOG
+  #include <mercury_util/mercury_time.h>
+  #include <stdio.h>
+  #define MERCURY_HANDLER_GEN_LOG_MESSAGE(x) \
+    printf("%s: Executing %s\n", hg_time_stamp(), x);
+#endif
+
 /* Define for large files (64-bit systems). */
 #cmakedefine HG_POSIX_HAS_LARGE_FILE
 

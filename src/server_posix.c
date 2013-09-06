@@ -28,6 +28,52 @@ static hg_ssize_t hg_posix_write(hg_int32_t fd, void *buf, hg_uint64_t count)
 #define MERCURY_POSIX_SERVER
 #include "mercury_posix_gen.h"
 
+/* Only routines that can't automatically be generated are defined here */
+
+/**
+ * getcwd
+ */
+static int
+getcwd_cb(hg_handle_t handle)
+{
+    int hg_ret = HG_SUCCESS;
+    getcwd_in_t in_struct;
+    getcwd_out_t out_struct;
+    hg_var_string_t string_out = NULL;
+    hg_uint64_t size;
+
+    /* Get input buffer */
+    hg_ret = HG_Handler_get_input(handle, &in_struct);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not get input struct");
+        goto done;
+    }
+
+    /* Get parameters */
+    size = in_struct.size;
+
+    string_out = malloc(size);
+
+    /* Call function */
+    MERCURY_HANDLER_GEN_LOG_MESSAGE("getcwd");
+    string_out = getcwd(string_out, size);
+
+    /* Fill output structure */
+    out_struct.string_out = string_out;
+
+    /* Free handle and send response back */
+    hg_ret = HG_Handler_start_output(handle, &out_struct);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not start output");
+        goto done;
+    }
+
+done:
+    free(string_out);
+
+    return hg_ret;
+}
+
 /**
  * open
  */
@@ -48,7 +94,6 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
 /******************************************************************************/
 #define REGISTER_SEQ \
     (access) \
-    (chdir) \
     (chmod) \
     (chown) \
     (close) \
@@ -102,8 +147,9 @@ static void
 register_posix(void)
 {
     BOOST_PP_SEQ_FOR_EACH(MERCURY_POSIX_HANDLER_REGISTER_SEQ, ,
-            REGISTER_SEQ LARGE_FILE_REGISTER_SEQ)
+            REGISTER_SEQ LARGE_FILE_REGISTER_SEQ);
 
+    MERCURY_HANDLER_REGISTER("getcwd", getcwd_cb, getcwd_in_t, getcwd_out_t);
 #ifndef HG_POSIX_HAS_LARGE_FILE
     MERCURY_HANDLER_REGISTER("open", open_cb, open_in_t, open_out_t);
 #else
@@ -117,7 +163,6 @@ int
 main(int argc, char *argv[])
 {
     na_class_t *network_class = NULL;
-//    unsigned int number_of_peers = 1;
     int hg_ret, na_ret;
 
     if (argc < 2) {
@@ -150,9 +195,8 @@ main(int argc, char *argv[])
     while (1) {
         hg_status_t status;
         /* Receive new function calls */
-        hg_ret = HG_Handler_process(100, &status);
+        hg_ret = HG_Handler_process(10, &status);
         if (hg_ret == HG_SUCCESS && status) {
-//            printf("Call processed\n");
         }
     }
 

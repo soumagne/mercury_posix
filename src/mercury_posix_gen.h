@@ -23,10 +23,10 @@ MERCURY_POSIX_GEN_STUB(access,
 )
 
 /* chdir */
-MERCURY_POSIX_GEN_STUB(chdir,
-        hg_int32_t,
-        (hg_const_string_t),
-)
+//MERCURY_POSIX_GEN_STUB(chdir,
+//        hg_int32_t,
+//        (hg_const_string_t),
+//)
 
 /* chmod */
 MERCURY_POSIX_GEN_STUB(chmod,
@@ -71,8 +71,6 @@ MERCURY_POSIX_GEN_STUB(dup2,
         (hg_int32_t)(hg_int32_t),
 )
 
-/* dup3 */
-
 /* fchdir */
 MERCURY_POSIX_GEN_STUB(fchdir,
         hg_int32_t,
@@ -102,7 +100,6 @@ MERCURY_POSIX_GEN_STUB(fdatasync,
 )
 
 /* fpathconf */
-/* TODO check long type */
 MERCURY_POSIX_GEN_STUB(fpathconf,
         hg_int64_t,
         (hg_int32_t)(hg_int32_t),
@@ -128,10 +125,8 @@ MERCURY_POSIX_GEN_STUB(ftruncate64,
 #endif
 
 /* getcwd */
-
-/* getwd */
-
-/* get_current_dir_name */
+MERCURY_GEN_PROC(getcwd_in_t, ((hg_uint64_t)(size)))
+MERCURY_GEN_PROC(getcwd_out_t, ((hg_var_string_t)(string_out)))
 
 /* lchown */
 MERCURY_POSIX_GEN_STUB(lchown,
@@ -219,7 +214,6 @@ hg_proc_open_in_t(hg_proc_t proc, void *data)
 MERCURY_GEN_PROC(open_out_t, ((hg_int32_t)(ret)))
 
 /* pathconf */
-/* TODO check long type */
 MERCURY_POSIX_GEN_STUB(pathconf,
         hg_int64_t,
         (hg_const_string_t)(hg_int32_t),

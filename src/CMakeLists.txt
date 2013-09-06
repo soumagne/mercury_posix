@@ -12,6 +12,14 @@ else()
   message(FATAL_ERROR "Could not find Boost, please check Boost_INCLUDE_DIR.")
 endif()
 
+# Server log
+option(MERCURY_POSIX_ENABLE_SERVER_LOG "Print log messages on server." ON)
+if(MERCURY_POSIX_ENABLE_SERVER_LOG)
+  set(HG_POSIX_HAS_SERVER_LOG 1)
+else()
+  set(HG_POSIX_HAS_SERVER_LOG 0)
+endif()
+
 # Large file support
 option(MERCURY_POSIX_ENABLE_LARGE_FILE "Enable support for large (64-bit) files on Linux." ON)
 if(MERCURY_POSIX_ENABLE_LARGE_FILE)

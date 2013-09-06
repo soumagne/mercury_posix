@@ -13,39 +13,104 @@
 
 #include <stdarg.h>
 
-/* getcwd */
-//MERCURY_POSIX_GEN_RPC_STUB(getcwd,
-//        hg_string_t,
-//        (hg_string_t)(hg_size_t), ,
-//        MERCURY_GEN_FALSE,
-//)
+/* Only routines that can't automatically be generated are defined here */
+
+/**
+ * getcwd
+ */
 char *
 getcwd(char *buf, size_t size)
 {
-    HG_ERROR_DEFAULT("getcwd not implemented");
-    return NULL;
-}
+    getcwd_in_t in_struct;
+    getcwd_out_t out_struct;
+    char *ret;
+    na_class_t *network_class;
+    char *server_name;
+    na_addr_t addr;
+    hg_id_t id;
 
-/* getwd */
-char *
-getwd(char *buf)
-{
-    HG_ERROR_DEFAULT("getwd not implemented");
-    return NULL;
-}
+    hg_request_t request;
+    hg_status_t status;
+    hg_bool_t hg_initialized;
 
-/* get_current_dir_name */
-//MERCURY_GEN_PROC(get_current_dir_name_out_t, HG_GEN_RET_PARAM(hg_string_t))
-//MERCURY_GEN_RPC_STUB(get_current_dir_name, get_current_dir_name,
-//        MERCURY_GEN_TRUE, hg_string_t, NULL,
-//        MERCURY_GEN_FALSE, , ,
-//        MERCURY_GEN_FALSE, get_current_dir_name_out_t, ,
-//        MERCURY_GEN_FALSE, )
-char *
-get_current_dir_name(void)
-{
-    HG_ERROR_DEFAULT("get_current_dir_name not implemented");
-    return NULL;
+    hg_bool_t func_registered;
+    int hg_ret, na_ret;
+
+    /* Is mercury library initialized */
+    HG_Initialized(&hg_initialized, &network_class);
+    if (!hg_initialized) {
+        char *na_plugin = getenv(HG_NA_PLUGIN);
+        if (!na_plugin) na_plugin = "mpi";
+        if (strcmp("mpi", na_plugin) == 0) {
+            network_class = NA_Initialize("mpi", NULL, 0);
+        }
+        else if (strcmp("bmi", na_plugin) == 0) {
+            network_class = NA_Initialize("bmi", NULL, 0);
+        }
+        hg_ret = HG_Init(network_class);
+        if (hg_ret != HG_SUCCESS) {
+            HG_ERROR_DEFAULT("Could not initialize function shipper");
+            ret = NULL;
+            goto done;
+        }
+    }
+
+    /* Get server_name if set */
+    server_name = getenv(HG_PORT_NAME);
+    /* Look up addr id */
+    na_ret = NA_Addr_lookup(network_class, server_name, &addr);
+    if (na_ret != NA_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not lookup addr");
+        ret = NULL;
+        goto done;
+    }
+
+    /* Check whether call has already been registered or not */
+    HG_Registered("getcwd", &func_registered, &id);
+    if (!func_registered) {
+        id = MERCURY_REGISTER("getcwd", getcwd_in_t, getcwd_out_t);
+    }
+
+    /* Fill input structure */
+    in_struct.size = size;
+
+    /* Forward call to remote addr and get a new request */
+    hg_ret = HG_Forward(addr, id, &in_struct, &out_struct, &request);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not forward call");
+        ret = NULL;
+        goto done;
+    }
+
+    /* Wait for call to be executed and return value to be sent back
+     * (Request is freed when the call completes)
+     */
+    hg_ret = HG_Wait(request, HG_MAX_IDLE_TIME, &status);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Error during wait");
+        ret = NULL;
+        goto done;
+    }
+    if (!status) {
+        HG_ERROR_DEFAULT("Operation did not complete");
+        ret = NULL;
+        goto done;
+    }
+
+    /* Get output parameters */
+    strcpy(buf, out_struct.string_out);
+    ret = buf;
+
+    /* Free request */
+    hg_ret = HG_Request_free(request);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not free request");
+        ret = NULL;
+        goto done;
+    }
+
+done:
+    return ret;
 }
 
 /**

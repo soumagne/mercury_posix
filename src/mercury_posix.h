@@ -50,8 +50,6 @@ HG_POSIX_EXPORT int ftruncate(int fd, off_t length);
 HG_POSIX_EXPORT int ftruncate64(int fd, off_t length);
 #endif
 HG_POSIX_EXPORT char *getcwd(char *buf, size_t size);
-HG_POSIX_EXPORT char *getwd(char *buf);
-HG_POSIX_EXPORT char *get_current_dir_name(void);
 HG_POSIX_EXPORT int lchown(const char *path, uid_t owner, gid_t group);
 HG_POSIX_EXPORT int link(const char *oldpath, const char *newpath);
 HG_POSIX_EXPORT int lockf(int fildes, int function, off_t size);
