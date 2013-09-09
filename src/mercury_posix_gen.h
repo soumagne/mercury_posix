@@ -126,7 +126,7 @@ MERCURY_POSIX_GEN_STUB(ftruncate64,
 
 /* getcwd */
 MERCURY_GEN_PROC(getcwd_in_t, ((hg_uint64_t)(size)))
-MERCURY_GEN_PROC(getcwd_out_t, ((hg_var_string_t)(string_out)))
+MERCURY_GEN_PROC(getcwd_out_t, ((hg_string_t)(string_out)))
 
 /* lchown */
 MERCURY_POSIX_GEN_STUB(lchown,

@@ -39,7 +39,7 @@ getcwd_cb(hg_handle_t handle)
     int hg_ret = HG_SUCCESS;
     getcwd_in_t in_struct;
     getcwd_out_t out_struct;
-    hg_var_string_t string_out = NULL;
+    hg_string_t string_out = NULL;
     hg_uint64_t size;
 
     /* Get input buffer */
