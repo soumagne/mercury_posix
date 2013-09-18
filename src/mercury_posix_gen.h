@@ -23,10 +23,12 @@ MERCURY_POSIX_GEN_STUB(access,
 )
 
 /* chdir */
-//MERCURY_POSIX_GEN_STUB(chdir,
-//        hg_int32_t,
-//        (hg_const_string_t),
-//)
+/*
+MERCURY_POSIX_GEN_STUB(chdir,
+        hg_int32_t,
+        (hg_const_string_t),
+)
+*/
 
 /* chmod */
 MERCURY_POSIX_GEN_STUB(chmod,
@@ -41,7 +43,7 @@ MERCURY_POSIX_GEN_STUB(chown,
 )
 
 /* creat */
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_CREAT64
 MERCURY_POSIX_GEN_STUB(creat,
         hg_int32_t,
         (hg_const_string_t)(hg_mode_t),
@@ -101,7 +103,7 @@ MERCURY_POSIX_GEN_STUB(fdatasync,
 
 /* fpathconf */
 MERCURY_POSIX_GEN_STUB(fpathconf,
-        hg_int64_t,
+        hg_long_t,
         (hg_int32_t)(hg_int32_t),
 )
 
@@ -112,7 +114,7 @@ MERCURY_POSIX_GEN_STUB(fsync,
 )
 
 /* ftruncate */
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_FTRUNCATE64
 MERCURY_POSIX_GEN_STUB(ftruncate,
         hg_int32_t,
         (hg_int32_t)(hg_off_t),
@@ -147,7 +149,7 @@ MERCURY_POSIX_GEN_STUB(lockf,
 )
 
 /* lseek */
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_LSEEK64
 MERCURY_POSIX_GEN_STUB(lseek,
         hg_off_t,
         (hg_int32_t)(hg_off_t)(hg_int32_t),
@@ -215,7 +217,7 @@ MERCURY_GEN_PROC(open_out_t, ((hg_int32_t)(ret)))
 
 /* pathconf */
 MERCURY_POSIX_GEN_STUB(pathconf,
-        hg_int64_t,
+        hg_long_t,
         (hg_const_string_t)(hg_int32_t),
 )
 
@@ -226,7 +228,7 @@ MERCURY_POSIX_GEN_STUB(pathconf,
 /* pwrite */
 
 /* read */
-MERCURY_POSIX_GEN_BULK_STUB(read,
+MERCURY_POSIX_GEN_BULK_STUB(hg_posix_read,
         hg_ssize_t,
         (int32_t),
         ,
@@ -255,7 +257,7 @@ MERCURY_POSIX_GEN_STUB(symlink,
 )
 
 /* truncate */
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_TRUNCATE64
 MERCURY_POSIX_GEN_STUB(truncate,
         hg_int32_t,
         (hg_const_string_t)(hg_off_t),
@@ -291,32 +293,36 @@ MERCURY_POSIX_GEN_BULK_STUB(hg_posix_write,
 )
 
 /* stat wrappers */
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_FSTAT64
 MERCURY_POSIX_GEN_STUB(__fxstat,
         hg_int32_t,
         (hg_int32_t)(hg_int32_t), (hg_stat_t)
-)
-
-MERCURY_POSIX_GEN_STUB(__xstat,
-        hg_int32_t,
-        (hg_int32_t)(hg_const_string_t), (hg_stat_t)
-)
-
-MERCURY_POSIX_GEN_STUB(__lxstat,
-        hg_int32_t,
-        (hg_int32_t)(hg_const_string_t), (hg_stat_t)
 )
 #else
 MERCURY_POSIX_GEN_STUB(__fxstat64,
         hg_int32_t,
         (hg_int32_t)(hg_int32_t), (hg_stat_t)
 )
+#endif
 
+#ifndef HG_POSIX_HAS_STAT64
+MERCURY_POSIX_GEN_STUB(__xstat,
+        hg_int32_t,
+        (hg_int32_t)(hg_const_string_t), (hg_stat_t)
+)
+#else
 MERCURY_POSIX_GEN_STUB(__xstat64,
         hg_int32_t,
         (hg_int32_t)(hg_const_string_t), (hg_stat_t)
 )
+#endif
 
+#ifndef HG_POSIX_HAS_LSTAT64
+MERCURY_POSIX_GEN_STUB(__lxstat,
+        hg_int32_t,
+        (hg_int32_t)(hg_const_string_t), (hg_stat_t)
+)
+#else
 MERCURY_POSIX_GEN_STUB(__lxstat64,
         hg_int32_t,
         (hg_int32_t)(hg_const_string_t), (hg_stat_t)

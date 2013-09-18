@@ -8,6 +8,8 @@
  * found at the root of the source code distribution tree.
  */
 
+#include "mercury_posix_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -28,6 +30,8 @@ int main(int argc, char *argv[])
     int error = 0;
     int rank = 0;
     ssize_t nbyte;
+    (void) argc;
+    (void) argv;
 
     sprintf(filename, "posix_test%d", rank);
 
@@ -41,7 +45,11 @@ int main(int argc, char *argv[])
 
     printf("(%d) Creating file...\n", rank);
 
+#ifdef HG_POSIX_HAS_OPEN64
+    fd = open64(filename, O_WRONLY | O_CREAT | O_TRUNC, mode);
+#else
     fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, mode);
+#endif
     if (fd < 0) {
         fprintf(stderr, "Error in fs_open\n");
         return EXIT_FAILURE;
@@ -65,7 +73,11 @@ int main(int argc, char *argv[])
 
     printf("(%d) Opening file...\n", rank);
 
+#ifdef HG_POSIX_HAS_OPEN64
+    fd = open64(filename, O_RDONLY, mode);
+#else
     fd = open(filename, O_RDONLY, mode);
+#endif
     if (fd < 0) {
         fprintf(stderr, "Error in fs_open\n");
         return EXIT_FAILURE;

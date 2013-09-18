@@ -53,4 +53,36 @@
   #define HG_POSIX_EXPORT
 #endif
 
+/* The size of `off_t', as computed by sizeof. */
+#define HG_POSIX_SIZEOF_OFF_T @HG_POSIX_SIZEOF_OFF_T@
+
+/* The size of `off64_t', as computed by sizeof. */
+#define HG_POSIX_SIZEOF_OFF64_T @HG_POSIX_SIZEOF_OFF64_T@
+
+#cmakedefine HG_POSIX_HAS_OFF64_T
+
+/* Define to 1 if you have the `creat64' function. */
+#cmakedefine HG_POSIX_HAS_CREAT64
+
+/* Define to 1 if you have the `ftruncate64' function. */
+#cmakedefine HG_POSIX_HAS_FTRUNCATE64
+
+/* Define to 1 if you have the `lseek64' function. */
+#cmakedefine HG_POSIX_HAS_LSEEK64
+
+/* Define to 1 if you have the `open64' function. */
+#cmakedefine HG_POSIX_HAS_OPEN64
+
+/* Define to 1 if you have the `truncate64' function. */
+#cmakedefine HG_POSIX_HAS_TRUNCATE64
+
+/* Define to 1 if you have the `fstat64' function. */
+#cmakedefine HG_POSIX_HAS_FSTAT64
+
+/* Define to 1 if you have the `stat64' function. */
+#cmakedefine HG_POSIX_HAS_STAT64
+
+/* Define to 1 if you have the `lstat64' function. */
+#cmakedefine HG_POSIX_HAS_LSTAT64
+
 #endif /* MERCURY_POSIX_CONFIG_H */

@@ -12,7 +12,9 @@ else()
   message(FATAL_ERROR "Could not find Boost, please check Boost_INCLUDE_DIR.")
 endif()
 
-# Server log
+#------------------------------------------------------------------------------
+# Server log.
+#------------------------------------------------------------------------------
 option(MERCURY_POSIX_ENABLE_SERVER_LOG "Print log messages on server." ON)
 if(MERCURY_POSIX_ENABLE_SERVER_LOG)
   set(HG_POSIX_HAS_SERVER_LOG 1)
@@ -20,13 +22,79 @@ else()
   set(HG_POSIX_HAS_SERVER_LOG 0)
 endif()
 
-# Large file support
+#------------------------------------------------------------------------------
+# Large file support.
+#------------------------------------------------------------------------------
 option(MERCURY_POSIX_ENABLE_LARGE_FILE "Enable support for large (64-bit) files on Linux." ON)
 if(MERCURY_POSIX_ENABLE_LARGE_FILE)
   set(HG_POSIX_HAS_LARGE_FILE 1)
-  add_definitions(-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
+  set(MERCURY_POSIX_LARGE_FILE_DEF
+    -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
+  add_definitions(${MERCURY_POSIX_LARGE_FILE_DEF})
+  # required for internal cmake tests
+  set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} ${MERCURY_POSIX_LARGE_FILE_DEF})
 else()
   set(HG_POSIX_HAS_LARGE_FILE 0)
+endif()
+
+# Set MERCURY_POSIX_DEF for building tests
+set(MERCURY_POSIX_DEF ${MERCURY_POSIX_LARGE_FILE_DEF} PARENT_SCOPE)
+
+# Cache HG_POSIX_HAS_LARGE_FILE
+if(NOT (DEFINED HG_POSIX_HAS_LARGE_FILE_CACHED))
+  set(HG_POSIX_HAS_LARGE_FILE_CACHED ${HG_POSIX_HAS_LARGE_FILE}
+    CACHE INTERNAL "Cached variable: HG_POSIX_HAS_LARGE_FILE")
+endif()
+
+# If HG_POSIX_HAS_LARGE_FILE does not match cached variable run tests again
+if(NOT (${HG_POSIX_HAS_LARGE_FILE} EQUAL ${HG_POSIX_HAS_LARGE_FILE_CACHED}))
+  set(HG_POSIX_HAS_LARGE_FILE_CACHED ${HG_POSIX_HAS_LARGE_FILE}
+    CACHE INTERNAL "Cached variable: HG_POSIX_HAS_LARGE_FILE")
+  unset(HAVE_HG_POSIX_SIZEOF_OFF_T   CACHE)
+  unset(HAVE_HG_POSIX_SIZEOF_OFF64_T CACHE)
+  unset(HG_POSIX_SIZEOF_OFF64_T CACHE)
+endif()
+
+#------------------------------------------------------------------------------
+# Check type sizes.
+#------------------------------------------------------------------------------
+include(CheckTypeSize)
+
+check_type_size(off_t   HG_POSIX_SIZEOF_OFF_T)
+check_type_size(off64_t HG_POSIX_SIZEOF_OFF64_T)
+if(NOT HG_POSIX_SIZEOF_OFF64_T)
+  set(HG_POSIX_SIZEOF_OFF64_T 0)
+endif()
+#
+if(HG_POSIX_SIZEOF_OFF64_T OR (HG_POSIX_SIZEOF_OFF_T EQUAL 8))
+  set(HG_POSIX_HAS_OFF64_T 1)
+else()
+  set(HG_POSIX_HAS_OFF64_T 0)
+endif()
+
+#------------------------------------------------------------------------------
+# Check if functions exist.
+#------------------------------------------------------------------------------
+include(CheckFunctionExists)
+
+if(MERCURY_POSIX_ENABLE_LARGE_FILE)
+  check_function_exists(creat64     HG_POSIX_HAS_CREAT64)
+  check_function_exists(ftruncate64 HG_POSIX_HAS_FTRUNCATE64)
+  check_function_exists(lseek64     HG_POSIX_HAS_LSEEK64)
+  check_function_exists(open64      HG_POSIX_HAS_OPEN64)
+  check_function_exists(truncate64  HG_POSIX_HAS_TRUNCATE64)
+  check_function_exists(fstat64     HG_POSIX_HAS_FSTAT64)
+  check_function_exists(stat64      HG_POSIX_HAS_STAT64)
+  check_function_exists(lstat64     HG_POSIX_HAS_LSTAT64)
+else()
+  set(HG_POSIX_HAS_CREAT64 0)
+  set(HG_POSIX_HAS_FTRUNCATE64 0)
+  set(HG_POSIX_HAS_LSEEK64 0)
+  set(HG_POSIX_HAS_OPEN64 0)
+  set(HG_POSIX_HAS_TRUNCATE64 0)
+  set(HG_POSIX_HAS_FSTAT64 0)
+  set(HG_POSIX_HAS_STAT64 0)
+  set(HG_POSIX_HAS_LSTAT64 0)
 endif()
 
 #------------------------------------------------------------------------------
@@ -81,9 +149,6 @@ set(MERCURY_POSIX_SRCS
 add_library(mercury_posix ${MERCURY_POSIX_SRCS})
 target_link_libraries(mercury_posix mercury)
 set_lib_options(mercury_posix "mercury_posix" ${MERCURY_POSIX_LIBTYPE})
-#if(MERCURY_ENABLE_COVERAGE)
-#  set_coverage_flags(mercury_posix)
-#endif()
 
 set(MERCURY_EXPORTED_LIBS mercury_posix ${MERCURY_EXPORTED_LIBS})
 

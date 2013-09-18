@@ -18,6 +18,14 @@
 #include "mercury_posix_types.h"
 
 /**
+ * read
+ */
+static hg_ssize_t hg_posix_read(hg_int32_t fd, void *buf, hg_uint64_t count)
+{
+    return read(fd, buf, count);
+}
+
+/**
  * write
  */
 static hg_ssize_t hg_posix_write(hg_int32_t fd, void *buf, hg_uint64_t count)
@@ -25,7 +33,7 @@ static hg_ssize_t hg_posix_write(hg_int32_t fd, void *buf, hg_uint64_t count)
     return write(fd, buf, count);
 }
 
-#define MERCURY_POSIX_SERVER
+#define MERCURY_POSIX_SERVER /* Define to generate server stubs */
 #include "mercury_posix_gen.h"
 
 /* Only routines that can't automatically be generated are defined here */
@@ -77,7 +85,7 @@ done:
 /**
  * open
  */
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_OPEN64
 MERCURY_HANDLER_GEN_CALLBACK_STUB(open_cb, open,
         MERCURY_GEN_TRUE, hg_int32_t,
         MERCURY_GEN_TRUE, open_in_t, open_in_params,
@@ -112,7 +120,7 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
     (mkfifo) \
     (mknod) \
     (pathconf) \
-    (read) \
+    (hg_posix_read) \
     (rename) \
     (rmdir) \
     (symlink) \
@@ -120,7 +128,7 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
     (unlink) \
     (hg_posix_write)
 
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_OPEN64
 #define LARGE_FILE_REGISTER_SEQ \
     (creat) \
     (ftruncate) \
@@ -150,7 +158,7 @@ register_posix(void)
             REGISTER_SEQ LARGE_FILE_REGISTER_SEQ);
 
     MERCURY_HANDLER_REGISTER("getcwd", getcwd_cb, getcwd_in_t, getcwd_out_t);
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_OPEN64
     MERCURY_HANDLER_REGISTER("open", open_cb, open_in_t, open_out_t);
 #else
     MERCURY_HANDLER_REGISTER("open64", open64_cb, open_in_t, open_out_t);

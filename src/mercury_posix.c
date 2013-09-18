@@ -116,7 +116,7 @@ done:
 /**
  * open
  */
-#ifndef HG_POSIX_HAS_LARGE_FILE
+#ifndef HG_POSIX_HAS_OPEN64
 MERCURY_GEN_RPC_STUB(hg_posix_open, open,
         MERCURY_GEN_TRUE, hg_int32_t, -1,
         MERCURY_GEN_TRUE, open_in_t, open_in_params,
@@ -163,6 +163,15 @@ open64(const char *pathname, int flags, ...)
     return ret;
 }
 #endif
+
+/**
+ * read
+ */
+ssize_t
+read(int fd, void *buf, size_t count)
+{
+    return hg_posix_read(fd, buf, count);
+}
 
 /**
  * write

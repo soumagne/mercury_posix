@@ -144,44 +144,15 @@ function(set_lib_options libtarget libname libtype)
 endfunction()
 
 #-----------------------------------------------------------------------------
-# Coverage
-#-----------------------------------------------------------------------------
-#option(MERCURY_ENABLE_COVERAGE "Enable coverage." OFF)
-#if(MERCURY_ENABLE_COVERAGE)
-#  set(COVERAGE_FLAGS "-fprofile-arcs -ftest-coverage" CACHE STRING
-#    "Flags to the coverage program that CTest uses to perform coverage inspection"
-#  )
-#  mark_as_advanced(COVERAGE_FLAGS)
-#endif()
-
-#macro(set_coverage_flags target)
-#  set_target_properties(${target}
-#    PROPERTIES
-#      COMPILE_FLAGS ${COVERAGE_FLAGS}
-#      LINK_FLAGS ${COVERAGE_FLAGS}
-#  )
-#endmacro()
-
-#-----------------------------------------------------------------------------
 # Source
 #-----------------------------------------------------------------------------
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
-
-#-----------------------------------------------------------------------------
-# Build doxygen documentation.
-#-----------------------------------------------------------------------------
-#option(BUILD_DOCUMENTATION "Build documentation." OFF)
-#if(BUILD_DOCUMENTATION)
-#  add_subdirectory(Documentation/Doxygen)
-#endif()
 
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
 option(BUILD_TESTING "Build testing." OFF)
 if(BUILD_TESTING)
-#  enable_testing()
-#  include(CTest)
   add_subdirectory(Testing)
 endif()
 
@@ -224,35 +195,18 @@ install(
 )
 
 #-----------------------------------------------------------------------------
-# For automake compatibility, also a provide a pkgconfig file
-#-----------------------------------------------------------------------------
-#if(NOT WIN32 AND NOT APPLE)
-#  configure_file(
-#    ${MERCURY_SOURCE_DIR}/CMake/mercury.pc.in
-#    ${MERCURY_BINARY_DIR}/CMakeFiles/mercury.pc @ONLY
-#  )
-
-#  install(
-#    FILES
-#      ${MERCURY_BINARY_DIR}/CMakeFiles/mercury.pc
-#    DESTINATION
-#      ${MERCURY_INSTALL_LIB_DIR}/pkgconfig
-#  )
-#endif()
-
-#-----------------------------------------------------------------------------
 # CPack
 #-----------------------------------------------------------------------------
-#set(CPACK_PACKAGE_DESCRIPTION_FILE ${MERCURY_SOURCE_DIR}/README)
-#set(CPACK_RESOURCE_FILE_LICENSE ${MERCURY_SOURCE_DIR}/COPYING)
-#set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Function Shipper for I/O Forwarding")
-#set(CPACK_PACKAGE_NAME "Mercury")
-#set(CPACK_PACKAGE_VENDOR "Argonne National Laboratories / The HDF Group")
-#set(CPACK_PACKAGE_VERSION_MAJOR ${MERCURY_VERSION_MAJOR})
-#set(CPACK_PACKAGE_VERSION_MINOR ${MERCURY_VERSION_MINOR})
-#set(CPACK_PACKAGE_VERSION_PATCH ${MERCURY_VERSION_PATCH})
-#set(CPACK_GENERATOR "TBZ2")
-#set(CPACK_SOURCE_PACKAGE_FILE_NAME ${MERCURY_PACKAGE_TARNAME}-${MERCURY_PACKAGE_VERSION})
-#set(CPACK_SOURCE_IGNORE_FILES ".git*;/GitSetup/;/.git/;.swp$;.#;/#;.*~")
-#set(CPACK_SOURCE_STRIP_FILES "")
-#include(CPack)
+set(CPACK_PACKAGE_DESCRIPTION_FILE ${MERCURY_POSIX_SOURCE_DIR}/README)
+set(CPACK_RESOURCE_FILE_LICENSE ${MERCURY_POSIX_SOURCE_DIR}/COPYING)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "POSIX I/O Forwarder")
+set(CPACK_PACKAGE_NAME "Mercury POSIX")
+set(CPACK_PACKAGE_VENDOR "Argonne National Laboratories / The HDF Group")
+set(CPACK_PACKAGE_VERSION_MAJOR ${MERCURY_POSIX_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${MERCURY_POSIX_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${MERCURY_POSIX_VERSION_PATCH})
+set(CPACK_GENERATOR "TBZ2")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME ${MERCURY_POSIX_PACKAGE_TARNAME}-${MERCURY_POSIX_PACKAGE_VERSION})
+set(CPACK_SOURCE_IGNORE_FILES ".git*;/GitSetup/;/.git/;.swp$;.#;/#;.*~")
+set(CPACK_SOURCE_STRIP_FILES "")
+include(CPack)
