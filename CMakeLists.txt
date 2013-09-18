@@ -5,7 +5,7 @@ project(MERCURY_POSIX C)
 # Version information 
 #------------------------------------------------------------------------------
 set(MERCURY_POSIX_VERSION_MAJOR "0")
-set(MERCURY_POSIX_VERSION_MINOR "1")
+set(MERCURY_POSIX_VERSION_MINOR "8")
 set(MERCURY_POSIX_VERSION_PATCH "0")
 set(MERCURY_POSIX_PACKAGE "mercury_posix")
 set(MERCURY_POSIX_PACKAGE_NAME "MERCURY_POSIX")
