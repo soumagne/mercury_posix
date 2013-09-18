@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    if (!error) printf("(%d) Successfully written %lu bytes!\n", rank, nbyte);
+    if (!error) printf("(%d) Successfully written %zu bytes!\n", rank, nbyte);
 
     /* Free bulk data */
     free(write_buf);
