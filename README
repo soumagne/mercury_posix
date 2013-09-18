@@ -1,83 +1,79 @@
-MERCURY
--------
+MERCURY POSIX
+-------------
 
-These are the release notes for Mercury (as of 06/26/2013).
+These are the release notes for Mercury POSIX (as of 09/18/2013).
 
-WHAT IS MERCURY?
+WHAT IS MERCURY POSIX?
 
-   Mercury is an RPC framework specifically designed for use in HPC systems
-   that allows asynchronous transfer of parameters and execution requests
-   and direct support of large data arguments. The interface is generic
-   to allow any function call to be shipped. The network implementation
-   is abstracted, allowing easy porting to future systems and efficient use
-   of existing native transport mechanisms.
+   Mercury POSIX is a lightweight library that allows redirection
+   of POSIX I/O calls to a remote server by using the Mercury RPC layer.
 
    Please see the accompanying COPYING file for license details.
 
 ARCHITECTURES SUPPORTED:
 
-   Architectures supported by MPI implementations are supported by the
-   network abstraction layer. Both MPI and BMI plugins fully
-   implement the network abstraction layer and are currently supported.
-   Additional plugins are currently in development and will be added in
-   future releases to support additional network protocols.
+   Mercury POSIX supports 32 and 64-bit Linux platforms. Network transports
+   supported by the Mercury RPC layer are supported by Mercury POSIX.
+   Please note, however, that the Mercury MPI transport does not provide
+   flexibility for dynamic connection/disconnection and is therefore not
+   recommended. Please refer to the Mercury documentation for more details.
 
 DOCUMENTATION:
 
  - Please see the accompanying design implementation documentation for
    additional and useful details.
 
+ - Environment variables:
+     MERCURY_NA_PLUGIN:
+     Underlying network transport method that is used for forwarding calls to
+     the remote server.
+     E.g. "bmi"
+
+     MERCURY_PORT_NAME:
+     Port name information (IP/port) specific to the network transport chosen
+     in order to establish a connection with a remote server.
+     E.g. "tcp://127.0.0.1:22222"
+
 SOFTWARE REQUIREMENTS:
 
-   Compiling and running Mercury requires up-to-date versions of various
+   Compiling and running Mercury POSIX requires up-to-date versions of various
    software packages. Beware that using excessively old versions of these
    packages can cause indirect errors that are very difficult to track down.
-   To make use of the MPI plugin, Mercury requires a _well-configured_ MPI
-   implementation (MPICH2 v1.4.1 or higher / OpenMPI v1.6 or higher). For
-   optional automatic code generation features (which are used for generating
-   encoding and decoding routines), the preprocessor subset of the BOOST
-   library must be included (Boost v1.48 or higher is recommended).
+   Mercury POSIX requires a _well-configured_ Mercury package with BOOST_PP
+   option (Boost preprocessor library) turned on.
 
 BUILDING:
 
  - If you install the full sources, put the tarball in a directory where you
    have permissions (e.g., your home directory) and unpack it:
 
-     gzip -cd mercury-X.tar.gz | tar xvf -
+     gzip -cd mercury_posix-X.tar.gz | tar xvf -
 
    or
 
-     bzip2 -dc mercury-X.tar.bz2 | tar xvf -
+     bzip2 -dc mercury_posix-X.tar.bz2 | tar xvf -
 
    Replace "X" with the version number of the package.
 
- - (Optional) If you checked out the sources using git and want to build
-   the testing suite (which requires the kwsys submodule), you need to issue
-   from the root of the source directory the following command:
-
-     git submodule update --init
-
- - Mercury makes use of the CMake build-system and requires that you do an
-   out-of-source build. In order to do that, you must create a new build
+ - Mercury POSIX makes use of the CMake build-system and requires that you do
+   an out-of-source build. In order to do that, you must create a new build
    directory and run the 'ccmake' command from it:
 
-     cd mercury-X
+     cd mercury_posix-X
      mkdir build
      cd build
-     ccmake .. (where ".." is the relative path to the mercury-X directory)
+     ccmake .. (where ".." is the relative path to the mercury_posix-X
+     directory)
 
  - Type 'c' multiple times and choose suitable options. Recommended options
    are:
 
-     BUILD_SHARED_LIBS                OFF (or ON if the library you link
-                                      against does not require static libraries)
+     BUILD_SHARED_LIBS                ON (for dynamic redirection)
      BUILD_TESTING                    ON
-     Boost_INCLUDE_DIR                /path/to/include/directory
      CMAKE_INSTALL_PREFIX             /path/to/install/directory
-     MERCURY_CREATE_SINGLE_LIB        ON
-     MERCURY_USE_BOOST_PP             ON
-     MERCURY_USE_XDR                  OFF
-     NA_USE_MPI                       ON
+     MERCURY_POSIX_ENABLE_LARGE_FILE  ON
+     MERCURY_POSIX_ENABLE_SERVER_LOG  ON (for printing log messages on server)
+     mercury_DIR                      /path/to/mercury/install/share/cmake/mercury
 
    Setting include directory and library paths may require you to toggle to
    the advanced mode by typing 't'. Once you are done and do not see any
@@ -102,46 +98,21 @@ INSTALLING:
      
 TESTING:
 
- - Tests can be run to check that basic function shipping (metadata and bulk
-   data transfers) is properly working. CTest is used to run the tests,
-   simply run from the build directory:
+ - Open a terminal, start a server:
+     mercury_posix_server bmi
+   or:
+     mpirun -np 1 mercury_posix_server mpi
 
-     ctest .
+ - Open a second terminal, export MERCURY_PORT_NAME and MERCURY_NA_PLUGIN:
+     export MERCURY_NA_PLUGIN="bmi"
+     export MERCURY_PORT_NAME="tcp://127.0.0.1:22222"
+   or
+     export MERCURY_NA_PLUGIN="mpi"
+     export MERCURY_PORT_NAME="string generated by mercury_posix_server in port.cfg"
 
- - (Optional) Verbose testing:
+ - In the same terminal, export LD_PRELOAD and launch the posix client test:
+     export LD_PRELOAD=/path/to/mercury_posix/lib/libmercury_posix.so
 
-   This is done by inserting "-V" in the "ctest" command.  E.g.:
-
-     ctest -V .
-
-   Extra verbose information can be displayed by inserting "-VV". E.g.:
-
-     ctest -VV .
-
- - Tests run with one server process and X client processes. To change the
-   number of client processes that are being used, the MPIEXEC_MAX_NUMPROCS
-   variable needs to be modified (toggle to advanced mode if you do not see
-   it). The default value is 2.
-   Note that you need to run 'make' again after the makefile generation
-   to use the new value. Note also that this variable needs to be changed
-   if you run the tests manually and use a different number of client
-   processes.
-
- - (Optional) To run the tests manually with the MPI plugin open up two
-   terminal windows, one for the server and one for the client. From the same
-   directory where you have write permissions (so that the port configuration
-   can be written by the server and read by the client) do:
-
-     mpirun -np 1 /path/to/binary/server_TESTNAME mpi
-
-   and in the other:
-
-     mpirun -np 2 /path/to/binary/client_TESTNAME mpi
-
-   Replace "TESTNAME" by "na", "rpc", "bulk", "bulk_seg", "pipeline" or "posix":
-   * "na" tests data transfers through the network abstraction layer
-   * "rpc" tests RPC execution without bulk data transfer
-   * "bulk" tests contiguous transfer of bulk data
-   * "bulk_seg" tests non-contiguous transfer of bulk data
-   * "pipeline" tests pipelining of bulk data using multiple block sizes
-   * "posix" combines previous tests and issues POSIX calls remotely
+     ./client_posix
+   or:
+     mpirun -np 1 ./client_posix
