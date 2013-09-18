@@ -77,7 +77,7 @@ set(MERCURY_POSIX_SRCS
 #----------------------------------------------------------------------------
 # Libraries
 #----------------------------------------------------------------------------
-# POSIX
+# mercury_posix
 add_library(mercury_posix ${MERCURY_POSIX_SRCS})
 target_link_libraries(mercury_posix mercury)
 set_lib_options(mercury_posix "mercury_posix" ${MERCURY_POSIX_LIBTYPE})
@@ -85,11 +85,14 @@ set_lib_options(mercury_posix "mercury_posix" ${MERCURY_POSIX_LIBTYPE})
 #  set_coverage_flags(mercury_posix)
 #endif()
 
-add_executable(server_posix server_posix.c)
-target_link_libraries(server_posix mercury)
-
-
 set(MERCURY_EXPORTED_LIBS mercury_posix ${MERCURY_EXPORTED_LIBS})
+
+#----------------------------------------------------------------------------
+# Binaries
+#----------------------------------------------------------------------------
+# mercury_posix_server
+add_executable(mercury_posix_server mercury_posix_server.c)
+target_link_libraries(mercury_posix_server mercury)
 
 #-----------------------------------------------------------------------------
 # Specify project header files to be installed
@@ -115,7 +118,7 @@ install(
 #---------------------------------------------------------------------------
 install(
   TARGETS
-    mercury_posix
+    mercury_posix_server mercury_posix
   EXPORT
     ${MERCURY_POSIX_EXPORTED_TARGETS}
   LIBRARY DESTINATION ${MERCURY_POSIX_INSTALL_LIB_DIR}
