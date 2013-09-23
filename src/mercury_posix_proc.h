@@ -64,6 +64,15 @@ hg_proc_hg_ulong_t(hg_proc_t proc, hg_ulong_t *data)
 #endif
 
 /* Proc routine for stat structure */
+#if defined __USE_MISC || defined __USE_XOPEN2K8
+MERCURY_GEN_STRUCT_PROC(hg_stat_time_t,
+        ((hg_long_t)(tv_sec))
+        ((hg_long_t)(tv_nsec))
+)
+#else
+#define hg_proc_hg_stat_time_t hg_proc_hg_long_t
+#endif
+
 MERCURY_GEN_STRUCT_PROC(hg_stat_t,
     ((hg_dev_t)(st_dev))              /* Device.  */
     ((hg_ino_t)(st_ino))              /* File serial number.  */
@@ -75,9 +84,9 @@ MERCURY_GEN_STRUCT_PROC(hg_stat_t,
     ((hg_off_t)(st_size))             /* Size of file, in bytes.  */
     ((hg_blksize_t)(st_blksize))      /* Optimal block size for I/O.  */
     ((hg_blkcnt_t)(st_blocks))        /* Number 512-byte blocks allocated. */
-//    ((hg_time_t)(st_atim))        /* Time of last access.  */
-//    ((hg_time_t)(st_mtim))        /* Time of last modification.  */
-//    ((hg_time_t)(st_ctim))        /* Time of last status change.  */
+    ((hg_stat_time_t)(st_atim))       /* Time of last access.  */
+    ((hg_stat_time_t)(st_mtim))       /* Time of last modification.  */
+    ((hg_stat_time_t)(st_ctim))       /* Time of last status change.  */
 )
 
 #endif /* MERCURY_POSIX_PROC_H */
