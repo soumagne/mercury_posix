@@ -25,13 +25,13 @@ DOCUMENTATION:
 
  - Environment variables:
      MERCURY_NA_PLUGIN:
-     Underlying network transport method that is used for forwarding calls to
-     the remote server.
+     Underlying network transport method used to forward calls to the remote
+     server.
      E.g. "bmi"
 
      MERCURY_PORT_NAME:
-     Port name information (IP/port) specific to the network transport chosen
-     in order to establish a connection with a remote server.
+     Port name information (IP/port) used to establish a connection with a 
+     remote server -- specific to the network transport chosen.
      E.g. "tcp://127.0.0.1:22222"
 
 SOFTWARE REQUIREMENTS:
