@@ -19,13 +19,43 @@
 static HG_INLINE int
 hg_proc_hg_long_t(hg_proc_t proc, hg_long_t *data)
 {
-    return hg_proc_raw(proc, data, sizeof(hg_long_t));
+    hg_int64_t converted_data;
+    int ret;
+
+    /* since we can't know if the size will be the same between systems,
+     * assign to int64_t */
+    if (hg_proc_get_op(proc) == HG_ENCODE) {
+        converted_data = (hg_int64_t) *data;
+    }
+
+    ret = hg_proc_int64_t(proc, &converted_data);
+
+    if (hg_proc_get_op(proc) == HG_DECODE) {
+        *data = (hg_long_t) converted_data;
+    }
+
+    return ret;
 }
 
 static HG_INLINE int
 hg_proc_hg_ulong_t(hg_proc_t proc, hg_ulong_t *data)
 {
-    return hg_proc_raw(proc, data, sizeof(hg_long_t));
+    hg_uint64_t converted_data;
+    int ret;
+
+    /* since we can't know if the size will be the same between systems,
+     * assign to uint64_t */
+    if (hg_proc_get_op(proc) == HG_ENCODE) {
+        converted_data = (hg_uint64_t) *data;
+    }
+
+    ret = hg_proc_uint64_t(proc, &converted_data);
+
+    if (hg_proc_get_op(proc) == HG_DECODE) {
+        *data = (hg_ulong_t) converted_data;
+    }
+
+    return ret;
 }
 
 #define hg_proc_hg_size_t    hg_proc_hg_uint64_t
