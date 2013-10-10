@@ -165,6 +165,54 @@ open64(const char *pathname, int flags, ...)
 #endif
 
 /**
+ * pipe
+ */
+int
+pipe(int fildes[2])
+{
+    /* TODO A very clean implementation would require an additional mercury proc
+     * that encodes and decodes an array of count types. Here we have only
+     * two integers so it is simpler like this for now. */
+    return hg_posix_pipe(fildes[0], fildes[1]);
+}
+
+/**
+ * pread
+ * TODO for now for convenience just map to our own posix_pread prototype
+ */
+#ifndef HG_POSIX_HAS_PREAD64
+ssize_t
+pread(int fd, void *buf, size_t count, off_t offset)
+{
+    return hg_posix_pread(fd, offset, buf, count);
+}
+#else
+ssize_t
+pread64(int fd, void *buf, size_t count, off_t offset)
+{
+    return hg_posix_pread64(fd, offset, buf, count);
+}
+#endif
+
+/**
+ * pwrite
+ * TODO for now for convenience just map to our own posix_pwrite prototype
+ */
+#ifndef HG_POSIX_HAS_PWRITE64
+ssize_t
+pwrite(int fd, const void *buf, size_t count, off_t offset)
+{
+    return hg_posix_pwrite(fd, offset, (void*)buf, count);
+}
+#else
+ssize_t
+pwrite64(int fd, const void *buf, size_t count, off_t offset)
+{
+    return hg_posix_pwrite64(fd, offset, (void*)buf, count);
+}
+#endif
+
+/**
  * read
  */
 ssize_t
@@ -180,4 +228,18 @@ ssize_t
 write(int fd, const void *buf, size_t count)
 {
     return hg_posix_write(fd, (void*)buf, count);
+}
+
+/**
+ * utime
+ */
+int
+utime(const char *path, const struct utimbuf *times)
+{
+    hg_utimbuf_t hg_utimbuf_times;
+
+    hg_utimbuf_times.actime = times->actime;
+    hg_utimbuf_times.modtime = times->modtime;
+
+    return hg_posix_utime(path, hg_utimbuf_times);
 }

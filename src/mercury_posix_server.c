@@ -14,21 +14,81 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <utime.h>
 
 #include "mercury_posix_types.h"
 
 /**
+ * pipe
+ */
+static hg_int32_t
+hg_posix_pipe(hg_int32_t fildes0, hg_int32_t fildes1)
+{
+    hg_int32_t fildes[2];
+
+    fildes[0] = fildes0;
+    fildes[1] = fildes1;
+
+    return pipe(fildes);
+}
+
+/**
+ * pread
+ */
+#ifndef HG_POSIX_HAS_PREAD64
+static hg_ssize_t
+hg_posix_pread(hg_int32_t fd, hg_off_t offset, void *buf, hg_uint64_t count)
+{
+    return pread(fd, buf, count, offset);
+}
+#else
+static hg_ssize_t
+hg_posix_pread64(hg_int32_t fd, hg_off_t offset, void *buf, hg_uint64_t count)
+{
+    return pread64(fd, buf, count, offset);
+}
+#endif
+
+/**
+ * pwrite
+ */
+#ifndef HG_POSIX_HAS_PWRITE64
+static hg_ssize_t
+hg_posix_pwrite(hg_int32_t fd, hg_off_t offset, void *buf, hg_uint64_t count)
+{
+    return pwrite(fd, buf, count, offset);
+}
+#else
+static hg_ssize_t
+hg_posix_pwrite64(hg_int32_t fd, hg_off_t offset, void *buf, hg_uint64_t count)
+{
+    return pwrite64(fd, buf, count, offset);
+}
+#endif
+
+/**
  * read
  */
-static hg_ssize_t hg_posix_read(hg_int32_t fd, void *buf, hg_uint64_t count)
+static hg_ssize_t
+hg_posix_read(hg_int32_t fd, void *buf, hg_uint64_t count)
 {
     return read(fd, buf, count);
 }
 
 /**
+ * utime
+ */
+static hg_int32_t
+hg_posix_utime(const char *filename, hg_utimbuf_t times)
+{
+    return utime(filename, &times);
+}
+
+/**
  * write
  */
-static hg_ssize_t hg_posix_write(hg_int32_t fd, void *buf, hg_uint64_t count)
+static hg_ssize_t
+hg_posix_write(hg_int32_t fd, void *buf, hg_uint64_t count)
 {
     return write(fd, buf, count);
 }
@@ -120,12 +180,14 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
     (mkfifo) \
     (mknod) \
     (pathconf) \
+    (hg_posix_pipe) \
     (hg_posix_read) \
     (rename) \
     (rmdir) \
     (symlink) \
     (umask) \
     (unlink) \
+    (hg_posix_utime) \
     (hg_posix_write)
 
 #ifndef HG_POSIX_HAS_OPEN64
@@ -133,6 +195,8 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
     (creat) \
     (ftruncate) \
     (lseek) \
+    (hg_posix_pread) \
+    (hg_posix_pwrite) \
     (truncate) \
     (__fxstat) \
     (__xstat) \
@@ -142,6 +206,8 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
     (creat64) \
     (ftruncate64) \
     (lseek64) \
+    (hg_posix_pread64) \
+    (hg_posix_pwrite64) \
     (truncate64) \
     (__fxstat64) \
     (__xstat64) \

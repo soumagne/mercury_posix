@@ -93,6 +93,12 @@ hg_proc_hg_ulong_t(hg_proc_t proc, hg_ulong_t *data)
 #define hg_proc_hg_blkcnt_t  hg_proc_hg_long_t
 #endif
 
+/* Proc routine for struct utimbuf */
+MERCURY_GEN_STRUCT_PROC(hg_utimbuf_t,
+        ((hg_long_t)(actime))
+        ((hg_long_t)(modtime))
+)
+
 /* Proc routine for stat structure */
 #if defined __USE_MISC || defined __USE_XOPEN2K8
 MERCURY_GEN_STRUCT_PROC(hg_stat_time_t,

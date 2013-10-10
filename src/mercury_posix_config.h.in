@@ -73,6 +73,12 @@
 /* Define to 1 if you have the `open64' function. */
 #cmakedefine HG_POSIX_HAS_OPEN64
 
+/* Define to 1 if you have the `pread64' function. */
+#cmakedefine HG_POSIX_HAS_PREAD64
+
+/* Define to 1 if you have the `pwrite64' function. */
+#cmakedefine HG_POSIX_HAS_PWRITE64
+
 /* Define to 1 if you have the `truncate64' function. */
 #cmakedefine HG_POSIX_HAS_TRUNCATE64
 

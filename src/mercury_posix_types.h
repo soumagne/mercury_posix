@@ -55,6 +55,8 @@ typedef hg_int64_t hg_blkcnt_t;
 typedef hg_long_t  hg_blkcnt_t;
 #endif
 
+typedef struct utimbuf hg_utimbuf_t;
+
 #if defined __USE_MISC || defined __USE_XOPEN2K8
 typedef struct timespec hg_stat_time_t;
 #else

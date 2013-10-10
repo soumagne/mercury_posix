@@ -68,11 +68,17 @@ HG_POSIX_EXPORT int open64(const char *pathname, int flags, ...);
 #endif
 //HG_POSIX_EXPORT DIR *opendir(const char *dirname);
 HG_POSIX_EXPORT long pathconf(const char *path, int name);
-//HG_POSIX_EXPORT int pipe(int fildes[2]);
-//HG_POSIX_EXPORT ssize_t pread(int fd, void *buf, size_t count, off_t offset);
-//HG_POSIX_EXPORT ssize_t pread64(int fd, void *buf, size_t count, off_t offset);
-//HG_POSIX_EXPORT ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset);
-//HG_POSIX_EXPORT ssize_t pwrite64(int fd, const void *buf, size_t count, off_t offset);
+HG_POSIX_EXPORT int pipe(int fildes[2]);
+#ifndef HG_POSIX_HAS_PREAD64
+HG_POSIX_EXPORT ssize_t pread(int fd, void *buf, size_t count, off_t offset);
+#else
+HG_POSIX_EXPORT ssize_t pread64(int fd, void *buf, size_t count, off_t offset);
+#endif
+#ifndef HG_POSIX_HAS_PWRITE64
+HG_POSIX_EXPORT ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset);
+#else
+HG_POSIX_EXPORT ssize_t pwrite64(int fd, const void *buf, size_t count, off_t offset);
+#endif
 HG_POSIX_EXPORT ssize_t read(int fd, void *buf, size_t count);
 //HG_POSIX_EXPORT struct dirent *readdir(DIR *dirp);
 //HG_POSIX_EXPORT int readdir_r(DIR *restrict dirp, struct dirent *restrict entry,
@@ -90,7 +96,7 @@ HG_POSIX_EXPORT int truncate64(const char *path, off_t length);
 #endif
 HG_POSIX_EXPORT mode_t umask(mode_t cmask);
 HG_POSIX_EXPORT int unlink(const char *pathname);
-//HG_POSIX_EXPORT int utime(const char *path, const struct utimbuf *times);
+HG_POSIX_EXPORT int utime(const char *path, const struct utimbuf *times);
 HG_POSIX_EXPORT ssize_t write(int fd, const void *buf, size_t count);
 
 /* stat wrappers */
