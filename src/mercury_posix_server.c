@@ -15,8 +15,27 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <utime.h>
+#include <dirent.h>
 
 #include "mercury_posix_types.h"
+
+/**
+ * closedir
+ */
+static hg_int32_t
+hg_posix_closedir(hg_ptr_t dirp)
+{
+    return closedir((DIR*) dirp);
+}
+
+/**
+ * opendir
+ */
+static hg_ptr_t
+hg_posix_opendir(const char *dirname)
+{
+    return (hg_ptr_t) opendir(dirname);
+}
 
 /**
  * pipe
@@ -73,6 +92,17 @@ static hg_ssize_t
 hg_posix_read(hg_int32_t fd, void *buf, hg_uint64_t count)
 {
     return read(fd, buf, count);
+}
+
+/**
+ * rewinddir
+ */
+static hg_uint8_t
+hg_posix_rewinddir(hg_ptr_t dirp)
+{
+    rewinddir((DIR*) dirp);
+
+    return 1;
 }
 
 /**
@@ -159,6 +189,50 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
         MERCURY_GEN_FALSE, )
 #endif
 
+/**
+ * readdir
+ */
+static int
+readdir_cb(hg_handle_t handle)
+{
+    int hg_ret = HG_SUCCESS;
+    readdir_in_t in_struct;
+    readdir_out_t out_struct;
+    DIR *dirp;
+    struct dirent *direntp;
+
+    /* Get input buffer */
+    hg_ret = HG_Handler_get_input(handle, &in_struct);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not get input struct");
+        goto done;
+    }
+
+    /* Get parameters */
+    dirp = (DIR*) in_struct.dirp;
+
+    /* Call function */
+    MERCURY_HANDLER_GEN_LOG_MESSAGE("readdir");
+    direntp = readdir(dirp);
+
+    /* Fill output structure */
+    out_struct.dirent_out.d_ino = direntp->d_ino;
+    out_struct.dirent_out.d_off = direntp->d_off;
+    out_struct.dirent_out.d_reclen = direntp->d_reclen;
+    out_struct.dirent_out.d_type = direntp->d_type;
+    out_struct.dirent_out.d_name = direntp->d_name;
+
+    /* Free handle and send response back */
+    hg_ret = HG_Handler_start_output(handle, &out_struct);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not start output");
+        goto done;
+    }
+
+done:
+    return hg_ret;
+}
+
 /******************************************************************************/
 #define REGISTER_SEQ \
     (access) \
@@ -173,16 +247,19 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
     (fdatasync) \
     (fpathconf) \
     (fsync) \
+    (hg_posix_closedir) \
     (lchown) \
     (link) \
     (lockf) \
     (mkdir) \
     (mkfifo) \
     (mknod) \
+    (hg_posix_opendir) \
     (pathconf) \
     (hg_posix_pipe) \
     (hg_posix_read) \
     (rename) \
+    (hg_posix_rewinddir) \
     (rmdir) \
     (symlink) \
     (umask) \
@@ -229,6 +306,7 @@ register_posix(void)
 #else
     MERCURY_HANDLER_REGISTER("open64", open64_cb, open_in_t, open_out_t);
 #endif
+    MERCURY_HANDLER_REGISTER("readdir", readdir_cb, readdir_in_t, readdir_out_t);
     MERCURY_HANDLER_REGISTER("sync", sync_cb, void, void);
 }
 
@@ -249,7 +327,7 @@ main(int argc, char *argv[])
     fflush(stdout);
 
     /* Initialize the interface */
-    network_class = NA_Initialize(argv[1], getenv(HG_PORT_NAME), 1);
+    network_class = NA_Initialize(getenv(HG_PORT_NAME), 1);
 
     hg_ret = HG_Handler_init(network_class);
     if (hg_ret != HG_SUCCESS) {

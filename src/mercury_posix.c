@@ -16,6 +16,15 @@
 /* Only routines that can't automatically be generated are defined here */
 
 /**
+ * closedir
+ */
+int
+closedir(DIR *dirp)
+{
+    return hg_posix_closedir((hg_ptr_t)dirp);
+}
+
+/**
  * getcwd
  */
 char *
@@ -39,14 +48,8 @@ getcwd(char *buf, size_t size)
     /* Is mercury library initialized */
     HG_Initialized(&hg_initialized, &network_class);
     if (!hg_initialized) {
-        char *na_plugin = getenv(HG_NA_PLUGIN);
-        if (!na_plugin) na_plugin = "mpi";
-        if (strcmp("mpi", na_plugin) == 0) {
-            network_class = NA_Initialize("mpi", NULL, 0);
-        }
-        else if (strcmp("bmi", na_plugin) == 0) {
-            network_class = NA_Initialize("bmi", NULL, 0);
-        }
+        network_class = NA_Initialize(getenv(HG_PORT_NAME), 0);
+
         hg_ret = HG_Init(network_class);
         if (hg_ret != HG_SUCCESS) {
             HG_ERROR_DEFAULT("Could not initialize function shipper");
@@ -165,6 +168,15 @@ open64(const char *pathname, int flags, ...)
 #endif
 
 /**
+ * opendir
+ */
+DIR *
+opendir(const char *dirname)
+{
+    return (DIR*)hg_posix_opendir(dirname);
+}
+
+/**
  * pipe
  */
 int
@@ -219,6 +231,113 @@ ssize_t
 read(int fd, void *buf, size_t count)
 {
     return hg_posix_read(fd, buf, count);
+}
+
+/**
+ * readdir
+ */
+struct dirent *
+readdir(DIR *dirp)
+{
+    readdir_in_t in_struct;
+    readdir_out_t out_struct;
+    static struct dirent dirent_ret;
+    struct dirent *ret;
+    na_class_t *network_class;
+    char *server_name;
+    na_addr_t addr;
+    hg_id_t id;
+
+    hg_request_t request;
+    hg_status_t status;
+    hg_bool_t hg_initialized;
+
+    hg_bool_t func_registered;
+    int hg_ret, na_ret;
+
+    /* Is mercury library initialized */
+    HG_Initialized(&hg_initialized, &network_class);
+    if (!hg_initialized) {
+        network_class = NA_Initialize(getenv(HG_PORT_NAME), 0);
+
+        hg_ret = HG_Init(network_class);
+        if (hg_ret != HG_SUCCESS) {
+            HG_ERROR_DEFAULT("Could not initialize function shipper");
+            ret = NULL;
+            goto done;
+        }
+    }
+
+    /* Get server_name if set */
+    server_name = getenv(HG_PORT_NAME);
+    /* Look up addr id */
+    na_ret = NA_Addr_lookup(network_class, server_name, &addr);
+    if (na_ret != NA_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not lookup addr");
+        ret = NULL;
+        goto done;
+    }
+
+    /* Check whether call has already been registered or not */
+    HG_Registered("readdir", &func_registered, &id);
+    if (!func_registered) {
+        id = MERCURY_REGISTER("readdir", getcwd_in_t, getcwd_out_t);
+    }
+
+    /* Fill input structure */
+    in_struct.dirp = (hg_ptr_t)dirp;
+
+    /* Forward call to remote addr and get a new request */
+    hg_ret = HG_Forward(addr, id, &in_struct, &out_struct, &request);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not forward call");
+        ret = NULL;
+        goto done;
+    }
+
+    /* Wait for call to be executed and return value to be sent back
+     * (Request is freed when the call completes)
+     */
+    hg_ret = HG_Wait(request, HG_MAX_IDLE_TIME, &status);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Error during wait");
+        ret = NULL;
+        goto done;
+    }
+    if (!status) {
+        HG_ERROR_DEFAULT("Operation did not complete");
+        ret = NULL;
+        goto done;
+    }
+
+    /* Get output parameters */
+    dirent_ret.d_ino = out_struct.dirent_out.d_ino;
+    dirent_ret.d_off = out_struct.dirent_out.d_off;
+    dirent_ret.d_reclen = out_struct.dirent_out.d_reclen;
+    dirent_ret.d_type = out_struct.dirent_out.d_type;
+    strcpy(dirent_ret.d_name, out_struct.dirent_out.d_name);
+
+    /* Free request */
+    hg_ret = HG_Request_free(request);
+    if (hg_ret != HG_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not free request");
+        ret = NULL;
+        goto done;
+    }
+
+    ret = &dirent_ret;
+
+done:
+    return ret;
+}
+
+/**
+ * rewinddir
+ */
+void
+rewinddir(DIR *dirp)
+{
+    (void) hg_posix_rewinddir((hg_ptr_t)dirp);
 }
 
 /**

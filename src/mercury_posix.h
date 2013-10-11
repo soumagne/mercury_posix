@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <utime.h>
+#include <dirent.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +35,7 @@ HG_POSIX_EXPORT int creat(const char *pathname, mode_t mode);
 HG_POSIX_EXPORT int creat64(const char *pathname, mode_t mode);
 #endif
 HG_POSIX_EXPORT int close(int fd);
-//HG_POSIX_EXPORT int closedir(DIR *dirp);
+HG_POSIX_EXPORT int closedir(DIR *dirp);
 HG_POSIX_EXPORT int dup(int oldfd);
 HG_POSIX_EXPORT int dup2(int oldfd, int newfd);
 HG_POSIX_EXPORT int fchdir(int fd);
@@ -66,7 +67,7 @@ HG_POSIX_EXPORT int open(const char *pathname, int flags, ...);
 #else
 HG_POSIX_EXPORT int open64(const char *pathname, int flags, ...);
 #endif
-//HG_POSIX_EXPORT DIR *opendir(const char *dirname);
+HG_POSIX_EXPORT DIR *opendir(const char *dirname);
 HG_POSIX_EXPORT long pathconf(const char *path, int name);
 HG_POSIX_EXPORT int pipe(int fildes[2]);
 #ifndef HG_POSIX_HAS_PREAD64
@@ -80,12 +81,12 @@ HG_POSIX_EXPORT ssize_t pwrite(int fd, const void *buf, size_t count, off_t offs
 HG_POSIX_EXPORT ssize_t pwrite64(int fd, const void *buf, size_t count, off_t offset);
 #endif
 HG_POSIX_EXPORT ssize_t read(int fd, void *buf, size_t count);
-//HG_POSIX_EXPORT struct dirent *readdir(DIR *dirp);
+HG_POSIX_EXPORT struct dirent *readdir(DIR *dirp);
 //HG_POSIX_EXPORT int readdir_r(DIR *restrict dirp, struct dirent *restrict entry,
 //       struct dirent **restrict result);
 ssize_t readlink(const char *path, char *buf, size_t bufsiz);
 HG_POSIX_EXPORT int rename(const char *old, const char *new);
-//HG_POSIX_EXPORT void rewinddir(DIR *dirp);
+HG_POSIX_EXPORT void rewinddir(DIR *dirp);
 HG_POSIX_EXPORT int rmdir(const char *pathname);
 HG_POSIX_EXPORT void sync(void);
 HG_POSIX_EXPORT int symlink(const char *oldpath, const char *newpath);

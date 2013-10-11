@@ -14,6 +14,7 @@
 #include "mercury_posix_types.h"
 
 #include <mercury_macros.h>
+#include <mercury_proc_string.h>
 
 /* Additional proc routines */
 static HG_INLINE int
@@ -97,6 +98,15 @@ hg_proc_hg_ulong_t(hg_proc_t proc, hg_ulong_t *data)
 MERCURY_GEN_STRUCT_PROC(hg_utimbuf_t,
         ((hg_long_t)(actime))
         ((hg_long_t)(modtime))
+)
+
+/* Proc routine for struct dirent */
+MERCURY_GEN_PROC(hg_dirent_t,
+        ((hg_ino_t)(d_ino))
+        ((hg_off_t)(d_off))
+        ((hg_uint16_t)(d_reclen))
+        ((hg_uint8_t)(d_type))
+        ((hg_string_t)(d_name))
 )
 
 /* Proc routine for stat structure */

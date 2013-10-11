@@ -14,8 +14,6 @@
 #include "mercury_posix_macros.h"
 #include "mercury_posix_proc.h"
 
-#include <mercury_proc_string.h>
-
 /* access */
 MERCURY_POSIX_GEN_STUB(access,
         hg_int32_t,
@@ -59,6 +57,12 @@ MERCURY_POSIX_GEN_STUB(creat64,
 MERCURY_POSIX_GEN_STUB(close,
         hg_int32_t,
         (hg_int32_t),
+)
+
+/* closedir */
+MERCURY_POSIX_GEN_STUB(hg_posix_closedir,
+        hg_int32_t,
+        (hg_ptr_t),
 )
 
 /* dup */
@@ -215,6 +219,12 @@ hg_proc_open_in_t(hg_proc_t proc, void *data)
 
 MERCURY_GEN_PROC(open_out_t, ((hg_int32_t)(ret)))
 
+/* opendir */
+MERCURY_POSIX_GEN_STUB(hg_posix_opendir,
+        hg_ptr_t,
+        (hg_const_string_t),
+)
+
 /* pathconf */
 MERCURY_POSIX_GEN_STUB(pathconf,
         hg_long_t,
@@ -269,10 +279,20 @@ MERCURY_POSIX_GEN_BULK_STUB(hg_posix_read,
         MERCURY_GEN_FALSE
 )
 
+/* readdir */
+MERCURY_GEN_PROC(readdir_in_t, ((hg_ptr_t)(dirp)))
+MERCURY_GEN_PROC(readdir_out_t, ((hg_dirent_t)(dirent_out)))
+
 /* rename */
 MERCURY_POSIX_GEN_STUB(rename,
         hg_int32_t,
         (hg_const_string_t)(hg_const_string_t),
+)
+
+/* rewinddir */
+MERCURY_POSIX_GEN_STUB(hg_posix_rewinddir,
+        hg_uint8_t,
+        (hg_ptr_t),
 )
 
 /* rmdir */

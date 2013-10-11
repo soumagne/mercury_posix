@@ -25,7 +25,7 @@
 
 #define MERCURY_POSIX_GEN_RPC_STUB(func_name, ret_type, in_types, out_types) \
         MERCURY_GEN_RPC_STUB(func_name, func_name, \
-                MERCURY_GEN_TRUE, ret_type, -1, \
+                MERCURY_GEN_TRUE, ret_type, 0, \
                 MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _in_t), HG_GEN_PARAM_NAME_SEQ(in_param_, in_types), \
                 MERCURY_GEN_TRUE, BOOST_PP_CAT(func_name, _out_t), HG_GEN_PARAM_NAME_SEQ(out_param_, out_types), \
                 MERCURY_GEN_FALSE, )
