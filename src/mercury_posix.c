@@ -12,8 +12,33 @@
 #include "mercury_posix_gen.h"
 
 #include <stdarg.h>
+#define __USE_GNU
+#include <dlfcn.h>
+
+#define REAL_DECL(name,ret,args) \
+ret (*__real_ ## name)args = NULL;
+
+#define GET_REAL_DECL(func) \
+        if (!(__real_ ## func)) \
+        { \
+            __real_ ## func = dlsym(RTLD_NEXT, #func); \
+        }
 
 /* Only routines that can't automatically be generated are defined here */
+
+/**
+ * close
+ */
+REAL_DECL(close, int, (int));
+int
+close(int fd)
+{
+    if (fcntl(fd, F_GETFD) != -1) {
+        GET_REAL_DECL(close);
+        return __real_close(fd);
+    }
+    return hg_posix_close(fd);
+}
 
 /**
  * closedir
@@ -227,9 +252,14 @@ pwrite64(int fd, const void *buf, size_t count, off_t offset)
 /**
  * read
  */
+REAL_DECL(read, ssize_t, (int, void*, size_t));
 ssize_t
 read(int fd, void *buf, size_t count)
 {
+    if (fcntl(fd, F_GETFD) != -1) {
+        GET_REAL_DECL(read);
+        return __real_read(fd, buf, count);
+    }
     return hg_posix_read(fd, buf, count);
 }
 
@@ -343,9 +373,14 @@ rewinddir(DIR *dirp)
 /**
  * write
  */
+REAL_DECL(write, int, (int, const void *, size_t));
 ssize_t
 write(int fd, const void *buf, size_t count)
 {
+    if (fcntl(fd, F_GETFD) != -1) {
+        GET_REAL_DECL(write);
+        return __real_write(fd, buf, count);
+    }
     return hg_posix_write(fd, (void*)buf, count);
 }
 

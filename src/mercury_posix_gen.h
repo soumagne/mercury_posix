@@ -54,7 +54,7 @@ MERCURY_POSIX_GEN_STUB(creat64,
 #endif
 
 /* close */
-MERCURY_POSIX_GEN_STUB(close,
+MERCURY_POSIX_GEN_STUB(hg_posix_close,
         hg_int32_t,
         (hg_int32_t),
 )

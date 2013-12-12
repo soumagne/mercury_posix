@@ -20,6 +20,15 @@
 #include "mercury_posix_types.h"
 
 /**
+ * close
+ */
+static hg_int32_t
+hg_posix_close(hg_int32_t fd)
+{
+    return close(fd);
+}
+
+/**
  * closedir
  */
 static hg_int32_t
@@ -238,7 +247,7 @@ done:
     (access) \
     (chmod) \
     (chown) \
-    (close) \
+    (hg_posix_close) \
     (dup) \
     (dup2) \
     (fchdir) \

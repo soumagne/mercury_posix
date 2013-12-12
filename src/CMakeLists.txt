@@ -151,7 +151,7 @@ set(MERCURY_POSIX_SRCS
 #----------------------------------------------------------------------------
 # mercury_posix
 add_library(mercury_posix ${MERCURY_POSIX_SRCS})
-target_link_libraries(mercury_posix mercury)
+target_link_libraries(mercury_posix mercury -ldl)
 set_lib_options(mercury_posix "mercury_posix" ${MERCURY_POSIX_LIBTYPE})
 
 set(MERCURY_EXPORTED_LIBS mercury_posix ${MERCURY_EXPORTED_LIBS})
