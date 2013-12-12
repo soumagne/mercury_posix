@@ -326,11 +326,6 @@ main(int argc, char *argv[])
     na_class_t *network_class = NULL;
     int hg_ret, na_ret;
 
-    if (argc < 2) {
-        fprintf(stderr, "Usage: %s <bmi|mpi>\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
     /* Used by Test Driver */
     printf("Waiting for client...\n");
     fflush(stdout);
