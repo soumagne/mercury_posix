@@ -334,6 +334,7 @@ main(int argc, char *argv[])
     /* Used by Test Driver */
     printf("Waiting for client...\n");
     fflush(stdout);
+    setvbuf(stdout, NULL, _IONBF, 0);
 
     /* Initialize the interface */
     network_class = NA_Initialize(getenv(HG_PORT_NAME), 1);
