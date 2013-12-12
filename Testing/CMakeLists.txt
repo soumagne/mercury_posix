@@ -12,4 +12,4 @@ include_directories(
 #------------------------------------------------------------------------------
 # POSIX test
 add_executable(client_posix client_posix.c)
-target_link_libraries(client_posix)
+target_link_libraries(client_posix mercury_posix)
