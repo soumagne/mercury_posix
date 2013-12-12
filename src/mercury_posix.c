@@ -10,6 +10,7 @@
 
 #include "mercury_posix.h"
 #include "mercury_posix_gen.h"
+#include "mercury_util/mercury_list.h"
 
 #include <stdarg.h>
 #define __USE_GNU
@@ -24,6 +25,48 @@ ret (*__real_ ## name)args = NULL;
             __real_ ## func = dlsym(RTLD_NEXT, #func); \
         }
 
+static hg_list_entry_t *hg_posix_fd_list_g = NULL;
+static HG_INLINE int
+hg_posix_fd_equal(hg_list_value_t value1, hg_list_value_t value2)
+{
+    return *((int*)value1) == *((int*)value2);
+}
+
+static HG_INLINE void
+hg_posix_store_fd(int fd)
+{
+    int *fd_buf = (int *) malloc(sizeof(int));
+    *fd_buf = fd;
+    if (!hg_list_find_data(hg_posix_fd_list_g, hg_posix_fd_equal,
+            (hg_list_value_t)fd_buf)) {
+        if (!hg_list_append(&hg_posix_fd_list_g, (hg_list_value_t)fd_buf)) {
+            HG_ERROR_DEFAULT("Could not append handle to list");
+        }
+    }
+}
+
+static HG_INLINE hg_bool_t
+hg_posix_check_fd(int fd)
+{
+    hg_bool_t ret = 1;
+
+    ret = (hg_list_find_data(hg_posix_fd_list_g, hg_posix_fd_equal,
+            (hg_list_value_t)&fd) != NULL);
+
+    return ret;
+}
+
+static HG_INLINE void
+hg_posix_remove_fd(int fd)
+{
+    hg_list_entry_t *fd_buf_entry = hg_list_find_data(hg_posix_fd_list_g,
+            hg_posix_fd_equal, (hg_list_value_t)&fd);
+    int *fd_buf = hg_list_data(fd_buf_entry);
+    hg_list_remove_data(&hg_posix_fd_list_g, hg_posix_fd_equal,
+            (hg_list_value_t)&fd);
+    free(fd_buf);
+}
+
 /* Only routines that can't automatically be generated are defined here */
 
 /**
@@ -33,10 +76,11 @@ REAL_DECL(close, int, (int));
 int
 close(int fd)
 {
-    if (fcntl(fd, F_GETFD) != -1) {
+    if (!hg_posix_check_fd(fd)) {
         GET_REAL_DECL(close);
         return __real_close(fd);
     }
+    hg_posix_remove_fd(fd);
     return hg_posix_close(fd);
 }
 
@@ -165,6 +209,9 @@ open(const char *pathname, int flags, ...)
     }
     va_end(ap);
 
+    /* Keep track of fd */
+    hg_posix_store_fd(ret);
+
     return ret;
 }
 #else
@@ -187,6 +234,9 @@ open64(const char *pathname, int flags, ...)
         ret = hg_posix_open64(pathname, flags, 0);
     }
     va_end(ap);
+
+    /* Keep track of fd */
+    hg_posix_store_fd(ret);
 
     return ret;
 }
@@ -256,7 +306,7 @@ REAL_DECL(read, ssize_t, (int, void*, size_t));
 ssize_t
 read(int fd, void *buf, size_t count)
 {
-    if (fcntl(fd, F_GETFD) != -1) {
+    if (!hg_posix_check_fd(fd)) {
         GET_REAL_DECL(read);
         return __real_read(fd, buf, count);
     }
@@ -377,7 +427,7 @@ REAL_DECL(write, int, (int, const void *, size_t));
 ssize_t
 write(int fd, const void *buf, size_t count)
 {
-    if (fcntl(fd, F_GETFD) != -1) {
+    if (!hg_posix_check_fd(fd)) {
         GET_REAL_DECL(write);
         return __real_write(fd, buf, count);
     }
