@@ -81,7 +81,11 @@ HG_POSIX_EXPORT ssize_t pwrite(int fd, const void *buf, size_t count, off_t offs
 HG_POSIX_EXPORT ssize_t pwrite64(int fd, const void *buf, size_t count, off_t offset);
 #endif
 HG_POSIX_EXPORT ssize_t read(int fd, void *buf, size_t count);
+#ifndef HG_POSIX_HAS_READDIR64
 HG_POSIX_EXPORT struct dirent *readdir(DIR *dirp);
+#else
+HG_POSIX_EXPORT struct dirent64 *readdir64(DIR *dirp);
+#endif
 //HG_POSIX_EXPORT int readdir_r(DIR *restrict dirp, struct dirent *restrict entry,
 //       struct dirent **restrict result);
 ssize_t readlink(const char *path, char *buf, size_t bufsiz);

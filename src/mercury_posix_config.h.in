@@ -91,4 +91,7 @@
 /* Define to 1 if you have the `lstat64' function. */
 #cmakedefine HG_POSIX_HAS_LSTAT64
 
+/* Define to 1 if you have the `readdir64' function. */
+#cmakedefine HG_POSIX_HAS_READDIR64
+
 #endif /* MERCURY_POSIX_CONFIG_H */

@@ -316,8 +316,8 @@ read(int fd, void *buf, size_t count)
 /**
  * readdir
  */
-struct dirent *
-readdir(DIR *dirp)
+static struct dirent *
+hg_posix_readdir(DIR *dirp)
 {
     readdir_in_t in_struct;
     readdir_out_t out_struct;
@@ -410,6 +410,21 @@ readdir(DIR *dirp)
 done:
     return ret;
 }
+
+#ifndef HG_POSIX_HAS_READDIR64
+struct dirent *
+readdir(DIR *dirp)
+{
+    return hg_posix_readdir(dirp);
+}
+#else
+struct dirent64 *
+readdir64(DIR *dirp)
+{
+    return (struct dirent64 *) hg_posix_readdir(dirp);
+}
+#endif
+
 
 /**
  * rewinddir

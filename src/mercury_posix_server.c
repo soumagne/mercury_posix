@@ -222,7 +222,11 @@ readdir_cb(hg_handle_t handle)
 
     /* Call function */
     MERCURY_HANDLER_GEN_LOG_MESSAGE("readdir");
+#ifndef HG_POSIX_HAS_READDIR64
     direntp = readdir(dirp);
+#else
+    direntp = (struct dirent *) readdir64(dirp);
+#endif
 
     /* Fill output structure */
     out_struct.dirent_out.d_ino = direntp->d_ino;
