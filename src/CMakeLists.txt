@@ -28,6 +28,7 @@ endif()
 option(MERCURY_POSIX_ENABLE_LARGE_FILE "Enable support for large (64-bit) files on Linux." ON)
 if(MERCURY_POSIX_ENABLE_LARGE_FILE)
   set(HG_POSIX_HAS_LARGE_FILE 1)
+  set(HG_POSIX_EXTENSION 64)
   set(MERCURY_POSIX_LARGE_FILE_DEF
     -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
   add_definitions(${MERCURY_POSIX_LARGE_FILE_DEF})
@@ -100,6 +101,7 @@ else()
   set(HG_POSIX_HAS_FSTAT64 0)
   set(HG_POSIX_HAS_STAT64 0)
   set(HG_POSIX_HAS_LSTAT64 0)
+  set(HG_POSIX_HAS_READDIR64 0)
 endif()
 
 #------------------------------------------------------------------------------
@@ -151,18 +153,18 @@ set(MERCURY_POSIX_SRCS
 # Libraries
 #----------------------------------------------------------------------------
 # mercury_posix
-add_library(mercury_posix ${MERCURY_POSIX_SRCS})
-target_link_libraries(mercury_posix mercury -ldl)
-set_lib_options(mercury_posix "mercury_posix" ${MERCURY_POSIX_LIBTYPE})
+add_library(mercury_posix${HG_POSIX_EXTENSION} ${MERCURY_POSIX_SRCS})
+target_link_libraries(mercury_posix${HG_POSIX_EXTENSION} mercury -ldl)
+set_lib_options(mercury_posix${HG_POSIX_EXTENSION} "mercury_posix${HG_POSIX_EXTENSION}" ${MERCURY_POSIX_LIBTYPE})
 
-set(MERCURY_EXPORTED_LIBS mercury_posix ${MERCURY_EXPORTED_LIBS})
+set(MERCURY_EXPORTED_LIBS mercury_posix${HG_POSIX_EXTENSION} ${MERCURY_EXPORTED_LIBS})
 
 #----------------------------------------------------------------------------
 # Binaries
 #----------------------------------------------------------------------------
 # mercury_posix_server
-add_executable(mercury_posix_server mercury_posix_server.c)
-target_link_libraries(mercury_posix_server mercury)
+add_executable(mercury_posix_server${HG_POSIX_EXTENSION} mercury_posix_server.c)
+target_link_libraries(mercury_posix_server${HG_POSIX_EXTENSION} mercury)
 
 #-----------------------------------------------------------------------------
 # Specify project header files to be installed
@@ -188,7 +190,7 @@ install(
 #---------------------------------------------------------------------------
 install(
   TARGETS
-    mercury_posix_server mercury_posix
+    mercury_posix_server${HG_POSIX_EXTENSION} mercury_posix${HG_POSIX_EXTENSION}
   EXPORT
     ${MERCURY_POSIX_EXPORTED_TARGETS}
   LIBRARY DESTINATION ${MERCURY_POSIX_INSTALL_LIB_DIR}
@@ -217,3 +219,6 @@ EXPORT (
   FILE
     ${MERCURY_POSIX_EXPORTED_TARGETS}.cmake
 )
+
+set(HG_POSIX_EXTENSION ${HG_POSIX_EXTENSION} PARENT_SCOPE)
+

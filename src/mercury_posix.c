@@ -361,7 +361,7 @@ hg_posix_readdir(DIR *dirp)
     /* Check whether call has already been registered or not */
     HG_Registered("readdir", &func_registered, &id);
     if (!func_registered) {
-        id = MERCURY_REGISTER("readdir", getcwd_in_t, getcwd_out_t);
+        id = MERCURY_REGISTER("readdir", readdir_in_t, readdir_out_t);
     }
 
     /* Fill input structure */
