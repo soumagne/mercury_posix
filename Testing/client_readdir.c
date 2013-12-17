@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     printf("0x%lX\n\n", dir);
     dir_info = readdir(dir);
-    //printf("0x%lX\n: %s\n", dir, dir_info->d_name);
+    printf("0x%lX\n: %s\n", dir, dir_info->d_name);
 
     closedir(dir);
 

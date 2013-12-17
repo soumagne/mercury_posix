@@ -67,7 +67,64 @@ hg_posix_remove_fd(int fd)
     free(fd_buf);
 }
 
-/* Only routines that can't automatically be generated are defined here */
+/**
+ * access
+ */
+int
+access(const char *pathname, int mode)
+{
+    return hg_posix_access(pathname, mode);
+}
+
+/**
+ * chmod
+ */
+int
+chmod(const char *path, mode_t mode)
+{
+    return hg_posix_chmod(path, mode);
+}
+
+/**
+ * chown
+ */
+int
+chown(const char *path, uid_t owner, gid_t group)
+{
+    return hg_posix_chown(path, owner, group);
+}
+
+/**
+ * creat
+ */
+#ifndef HG_POSIX_HAS_CREAT64
+int
+creat(const char *pathname, mode_t mode)
+{
+    int ret;
+
+    ret = hg_posix_creat(pathname, mode);
+
+    /* Keep track of fd */
+    if (ret != -1) hg_posix_store_fd(ret);
+
+    return ret;
+}
+#else
+int
+creat64(const char *pathname, mode_t mode)
+{
+    int ret;
+
+    ret = hg_posix_creat64(pathname, mode);
+
+    /* Keep track of fd */
+    if (ret != -1) hg_posix_store_fd(ret);
+
+    return ret;
+
+}
+#endif
 
 /**
  * close
@@ -92,6 +149,190 @@ closedir(DIR *dirp)
 {
     return hg_posix_closedir((hg_ptr_t)dirp);
 }
+
+/**
+ * dup
+ */
+REAL_DECL(dup, int, (int));
+int
+dup(int oldfd)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(oldfd)) {
+        GET_REAL_DECL(dup);
+        ret = __real_dup(oldfd);
+        return ret;
+    }
+    ret = hg_posix_dup(oldfd);
+
+    /* Keep track of fd */
+    if (ret != -1) hg_posix_store_fd(ret);
+
+    return ret;
+}
+
+/**
+ * dup2
+ */
+REAL_DECL(dup2, int, (int, int));
+int
+dup2(int oldfd, int newfd)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(oldfd)) {
+        GET_REAL_DECL(dup2);
+        ret = __real_dup2(oldfd, newfd);
+        return ret;
+    }
+    ret = hg_posix_dup2(oldfd, newfd);
+
+    /* Keep track of fd */
+    if (ret != -1) hg_posix_store_fd(ret);
+
+    return ret;
+}
+
+/**
+ * fchdir
+ */
+REAL_DECL(fchdir, int, (int));
+int
+fchdir(int fd)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(fchdir);
+        ret = __real_fchdir(fd);
+        return ret;
+    }
+    ret = hg_posix_fchdir(fd);
+    return ret;
+}
+
+/**
+ * fchmod
+ */
+REAL_DECL(fchmod, int, (int, mode_t));
+int
+fchmod(int fd, mode_t mode)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(fchmod);
+        ret = __real_fchmod(fd, mode);
+        return ret;
+    }
+    ret = hg_posix_fchmod(fd, mode);
+    return ret;
+}
+
+/**
+ * fchown
+ */
+REAL_DECL(fchown, int, (int, uid_t, gid_t));
+int
+fchown(int fd, uid_t owner, gid_t group)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(fchown);
+        ret = __real_fchown(fd, owner, group);
+        return ret;
+    }
+    ret = hg_posix_fchown(fd, owner, group);
+    return ret;
+}
+
+/**
+ * fdatasync
+ */
+REAL_DECL(fdatasync, int, (int));
+int
+fdatasync(int fd)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(fdatasync);
+        ret = __real_fdatasync(fd);
+        return ret;
+    }
+    ret = hg_posix_fdatasync(fd);
+    return ret;
+}
+
+/**
+ * fpathconf
+ */
+REAL_DECL(fpathconf, long, (int, int));
+long
+fpathconf(int fildes, int name)
+{
+    long ret;
+
+    if (!hg_posix_check_fd(fildes)) {
+        GET_REAL_DECL(fpathconf);
+        ret = __real_fpathconf(fildes, name);
+        return ret;
+    }
+    ret = hg_posix_fpathconf(fildes, name);
+    return ret;
+}
+
+/**
+ * fsync
+ */
+REAL_DECL(fsync, int, (int));
+int
+fsync(int fd)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(fsync);
+        ret = __real_fsync(fd);
+        return ret;
+    }
+    ret = hg_posix_fsync(fd);
+    return ret;
+}
+
+#ifndef HG_POSIX_HAS_FTRUNCATE64
+REAL_DECL(ftruncate, int, (int, off_t));
+int
+ftruncate(int fd, off_t length)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(ftruncate);
+        ret = __real_ftruncate(fd, length);
+        return ret;
+    }
+    ret = hg_posix_ftruncate(fd, length);
+    return ret;
+}
+#else
+REAL_DECL(ftruncate64, int, (int, off_t));
+int
+ftruncate64(int fd, off_t length)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(ftruncate64);
+        ret = __real_ftruncate64(fd, length);
+        return ret;
+    }
+    ret = hg_posix_ftruncate64(fd, length);
+    return ret;
+}
+#endif
 
 /**
  * getcwd
@@ -140,7 +381,7 @@ getcwd(char *buf, size_t size)
     /* Check whether call has already been registered or not */
     HG_Registered("getcwd", &func_registered, &id);
     if (!func_registered) {
-        id = MERCURY_REGISTER("getcwd", getcwd_in_t, getcwd_out_t);
+        id = MERCURY_REGISTER("hg_posix_getcwd", getcwd_in_t, getcwd_out_t);
     }
 
     /* Fill input structure */
@@ -186,10 +427,108 @@ done:
 }
 
 /**
+ * lchown
+ */
+int
+lchown(const char *path, uid_t owner, gid_t group)
+{
+    return hg_posix_lchown(path, owner, group);
+}
+
+/**
+ * link
+ */
+int
+link(const char *oldpath, const char *newpath)
+{
+    return hg_posix_link(oldpath, newpath);
+}
+
+/**
+ * lockf
+ */
+REAL_DECL(lockf, int, (int, int, off_t));
+int
+lockf(int fildes, int function, off_t size)
+{
+    int ret;
+
+    if (!hg_posix_check_fd(fildes)) {
+        GET_REAL_DECL(lockf);
+        ret = __real_lockf(fildes, function, size);
+        return ret;
+    }
+    ret = hg_posix_lockf(fildes, function, size);
+    return ret;
+}
+
+/**
+ * lseek
+ */
+#ifndef HG_POSIX_HAS_LSEEK64
+REAL_DECL(lseek, off_t, (int, off_t, int));
+off_t
+lseek(int fildes, off_t offset, int whence)
+{
+    off_t ret;
+
+    if (!hg_posix_check_fd(fildes)) {
+        GET_REAL_DECL(lseek);
+        ret = __real_lseek(fildes, offset, whence);
+        return ret;
+    }
+    ret = hg_posix_lseek(fildes, offset, whence);
+    return ret;
+}
+#else
+REAL_DECL(lseek64, off_t, (int, off_t, int));
+off_t
+lseek64(int fildes, off_t offset, int whence)
+{
+    off_t ret;
+
+    if (!hg_posix_check_fd(fildes)) {
+        GET_REAL_DECL(lseek64);
+        ret = __real_lseek64(fildes, offset, whence);
+        return ret;
+    }
+    ret = hg_posix_lseek64(fildes, offset, whence);
+    return ret;
+}
+#endif
+
+/**
+ * mkdir
+ */
+int
+mkdir(const char *path, mode_t mode)
+{
+    return hg_posix_mkdir(path, mode);
+}
+
+/**
+ * mkfifo
+ */
+int
+mkfifo(const char *path, mode_t mode)
+{
+    return hg_posix_mkfifo(path, mode);
+}
+
+/**
+ * mknod
+ */
+int
+mknod(const char *pathname, mode_t mode, dev_t dev)
+{
+    return hg_posix_mknod(pathname, mode, dev);
+}
+
+/**
  * open
  */
 #ifndef HG_POSIX_HAS_OPEN64
-MERCURY_GEN_RPC_STUB(hg_posix_open, open,
+MERCURY_GEN_RPC_STUB(hg_posix_open, hg_posix_open,
         MERCURY_GEN_TRUE, hg_int32_t, -1,
         MERCURY_GEN_TRUE, open_in_t, open_in_params,
         MERCURY_GEN_FALSE, open_out_t, ,
@@ -215,7 +554,7 @@ open(const char *pathname, int flags, ...)
     return ret;
 }
 #else
-MERCURY_GEN_RPC_STUB(hg_posix_open64, open64,
+MERCURY_GEN_RPC_STUB(hg_posix_open64, hg_posix_open64,
         MERCURY_GEN_TRUE, hg_int32_t, -1,
         MERCURY_GEN_TRUE, open_in_t, open_in_params,
         MERCURY_GEN_FALSE, open_out_t, ,
@@ -252,15 +591,38 @@ opendir(const char *dirname)
 }
 
 /**
+ * pathconf
+ */
+long
+pathconf(const char *path, int name)
+{
+    return hg_posix_pathconf(path, name);
+}
+
+/**
  * pipe
  */
+REAL_DECL(pipe, int, (int fildes[2]));
 int
 pipe(int fildes[2])
 {
+    int ret;
+
+    if (!hg_posix_check_fd(fildes[0]) || !hg_posix_check_fd(fildes[1])) {
+        GET_REAL_DECL(pipe);
+        ret = __real_pipe(fildes);
+        return ret;
+    }
+
     /* TODO A very clean implementation would require an additional mercury proc
      * that encodes and decodes an array of count types. Here we have only
      * two integers so it is simpler like this for now. */
-    return hg_posix_pipe(fildes[0], fildes[1]);
+    ret = hg_posix_pipe(fildes[0], fildes[1]);
+
+    /* Keep track of fd */
+    hg_posix_store_fd(ret);
+
+    return ret;
 }
 
 /**
@@ -268,16 +630,34 @@ pipe(int fildes[2])
  * TODO for now for convenience just map to our own posix_pread prototype
  */
 #ifndef HG_POSIX_HAS_PREAD64
+REAL_DECL(pread, ssize_t, (int, void *, size_t, off_t));
 ssize_t
 pread(int fd, void *buf, size_t count, off_t offset)
 {
-    return hg_posix_pread(fd, offset, buf, count);
+    ssize_t ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(pread);
+        ret = __real_pread(fd, buf, count, offset);
+        return ret;
+    }
+    ret = hg_posix_pread(fd, offset, buf, count);
+    return ret;
 }
 #else
+REAL_DECL(pread64, ssize_t, (int, void *, size_t, off_t));
 ssize_t
 pread64(int fd, void *buf, size_t count, off_t offset)
 {
-    return hg_posix_pread64(fd, offset, buf, count);
+    ssize_t ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(pread64);
+        ret = __real_pread64(fd, buf, count, offset);
+        return ret;
+    }
+    ret = hg_posix_pread64(fd, offset, buf, count);
+    return ret;
 }
 #endif
 
@@ -286,16 +666,34 @@ pread64(int fd, void *buf, size_t count, off_t offset)
  * TODO for now for convenience just map to our own posix_pwrite prototype
  */
 #ifndef HG_POSIX_HAS_PWRITE64
+REAL_DECL(pwrite, ssize_t, (int, const void *, size_t, off_t));
 ssize_t
 pwrite(int fd, const void *buf, size_t count, off_t offset)
 {
-    return hg_posix_pwrite(fd, offset, (void*)buf, count);
+    ssize_t ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(pwrite);
+        ret = __real_pwrite(fd, buf, count, offset);
+        return ret;
+    }
+    ret = hg_posix_pwrite(fd, offset, (void*)buf, count);
+    return ret;
 }
 #else
+REAL_DECL(pwrite64, ssize_t, (int, const void *, size_t, off_t));
 ssize_t
 pwrite64(int fd, const void *buf, size_t count, off_t offset)
 {
-    return hg_posix_pwrite64(fd, offset, (void*)buf, count);
+    ssize_t ret;
+
+    if (!hg_posix_check_fd(fd)) {
+        GET_REAL_DECL(pwrite64);
+        ret = __real_pwrite64(fd, buf, count, offset);
+        return ret;
+    }
+    ret = hg_posix_pwrite64(fd, offset, (void*)buf, count);
+    return ret;
 }
 #endif
 
@@ -312,6 +710,7 @@ read(int fd, void *buf, size_t count)
     }
     return hg_posix_read(fd, buf, count);
 }
+
 
 /**
  * readdir
@@ -361,7 +760,7 @@ hg_posix_readdir(DIR *dirp)
     /* Check whether call has already been registered or not */
     HG_Registered("readdir", &func_registered, &id);
     if (!func_registered) {
-        id = MERCURY_REGISTER("readdir", readdir_in_t, readdir_out_t);
+        id = MERCURY_REGISTER("hg_posix_readdir", readdir_in_t, readdir_out_t);
     }
 
     /* Fill input structure */
@@ -405,7 +804,7 @@ hg_posix_readdir(DIR *dirp)
         goto done;
     }
 
-    ret = &dirent_ret;
+    ret = (dirent_ret.d_ino) ? &dirent_ret : NULL;
 
 done:
     return ret;
@@ -425,6 +824,14 @@ readdir64(DIR *dirp)
 }
 #endif
 
+/**
+ * rename
+ */
+int
+rename(const char *old, const char *new)
+{
+    return hg_posix_rename(old, new);
+}
 
 /**
  * rewinddir
@@ -433,6 +840,82 @@ void
 rewinddir(DIR *dirp)
 {
     (void) hg_posix_rewinddir((hg_ptr_t)dirp);
+}
+
+/**
+ * rmdir
+ */
+int
+rmdir(const char *pathname)
+{
+    return hg_posix_rmdir(pathname);
+}
+
+/**
+ * sync (not necessary)
+ */
+void
+sync(void)
+{
+    hg_posix_sync();
+}
+
+/**
+ * symlink
+ */
+int
+symlink(const char *oldpath, const char *newpath)
+{
+    return hg_posix_symlink(oldpath, newpath);
+}
+
+/**
+ * truncate
+ */
+#ifndef HG_POSIX_HAS_TRUNCATE64
+int
+truncate(const char *path, off_t length)
+{
+    return hg_posix_truncate(path, length);
+}
+#else
+int
+truncate64(const char *path, off_t length)
+{
+    return hg_posix_truncate64(path, length);
+}
+#endif
+
+/**
+ * umask
+ */
+mode_t
+umask(mode_t cmask)
+{
+    return hg_posix_umask(cmask);
+}
+
+/**
+ * unlink
+ */
+int
+unlink(const char *pathname)
+{
+    return hg_posix_unlink(pathname);
+}
+
+/**
+ * utime
+ */
+int
+utime(const char *path, const struct utimbuf *times)
+{
+    hg_utimbuf_t hg_utimbuf_times;
+
+    hg_utimbuf_times.actime = times->actime;
+    hg_utimbuf_times.modtime = times->modtime;
+
+    return hg_posix_utime(path, hg_utimbuf_times);
 }
 
 /**
@@ -449,16 +932,45 @@ write(int fd, const void *buf, size_t count)
     return hg_posix_write(fd, (void*)buf, count);
 }
 
-/**
- * utime
- */
+/* stat wrappers */
+#ifndef HG_POSIX_HAS_FSTAT64
 int
-utime(const char *path, const struct utimbuf *times)
+__fxstat(int __ver, int __fildes, struct stat *__stat_buf)
 {
-    hg_utimbuf_t hg_utimbuf_times;
-
-    hg_utimbuf_times.actime = times->actime;
-    hg_utimbuf_times.modtime = times->modtime;
-
-    return hg_posix_utime(path, hg_utimbuf_times);
+    return hg_posix___fxstat(__ver, __fildes, __stat_buf);
 }
+#else
+int
+__fxstat64(int __ver, int __fildes, struct stat64 *__stat_buf)
+{
+    return hg_posix___fxstat64(__ver, __fildes, __stat_buf);
+}
+#endif
+
+#ifndef HG_POSIX_HAS_STAT64
+int
+__xstat(int __ver, const char *__filename, struct stat *__stat_buf)
+{
+    return hg_posix___xstat(__ver, __filename, __stat_buf);
+}
+#else
+int
+__xstat64(int __ver, const char *__filename, struct stat64 *__stat_buf)
+{
+    return hg_posix___xstat64(__ver, __filename, __stat_buf);
+}
+#endif
+
+#ifndef HG_POSIX_HAS_LSTAT64
+int
+__lxstat(int __ver, const char *__filename, struct stat *__stat_buf)
+{
+    return hg_posix___lxstat(__ver, __filename, __stat_buf);
+}
+#else
+int
+__lxstat64(int __ver, const char *__filename, struct stat64 *__stat_buf)
+{
+    return hg_posix___lxstat64(__ver, __filename, __stat_buf);
+}
+#endif

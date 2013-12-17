@@ -18,6 +18,51 @@
 #include <dirent.h>
 
 #include "mercury_posix_types.h"
+#include "mercury_proc_string.h"
+
+/**
+ * access
+ */
+static hg_int32_t
+hg_posix_access(hg_const_string_t pathname, hg_int32_t mode)
+{
+    return access(pathname, mode);
+}
+
+/**
+ * chmod
+ */
+static hg_int32_t
+hg_posix_chmod(hg_const_string_t path, hg_mode_t mode)
+{
+    return chmod(path, mode);
+}
+
+/**
+ * chown
+ */
+static hg_int32_t
+hg_posix_chown(hg_const_string_t path, hg_uid_t owner, hg_gid_t group)
+{
+    return chown(path, owner, group);
+}
+
+/**
+ * creat
+ */
+#ifndef HG_POSIX_HAS_CREAT64
+static hg_int32_t
+hg_posix_creat(hg_const_string_t pathname, hg_mode_t mode)
+{
+    return creat(pathname, mode);
+}
+#else
+static hg_int32_t
+hg_posix_creat64(hg_const_string_t pathname, hg_mode_t mode)
+{
+    return creat64(pathname, mode);
+}
+#endif
 
 /**
  * close
@@ -38,12 +83,199 @@ hg_posix_closedir(hg_ptr_t dirp)
 }
 
 /**
+ * dup
+ */
+static hg_int32_t
+hg_posix_dup(hg_int32_t oldfd)
+{
+    return dup(oldfd);
+}
+
+/**
+ * dup2
+ */
+static hg_int32_t
+hg_posix_dup2(hg_int32_t oldfd, hg_int32_t newfd)
+{
+    return dup2(oldfd, newfd);
+}
+
+/**
+ * fchdir
+ */
+static hg_int32_t
+hg_posix_fchdir(hg_int32_t fd)
+{
+    return fchdir(fd);
+}
+
+/**
+ * fchmod
+ */
+static hg_int32_t
+hg_posix_fchmod(hg_int32_t fd, hg_mode_t mode)
+{
+    return fchmod(fd, mode);
+}
+
+/**
+ * fchown
+ */
+static hg_int32_t
+hg_posix_fchown(hg_int32_t fd, hg_uid_t owner, hg_gid_t group)
+{
+    return fchown(fd, owner, group);
+}
+
+/**
+ * fdatasync
+ */
+static hg_int32_t
+hg_posix_fdatasync(hg_int32_t fd)
+{
+    return fdatasync(fd);
+}
+
+/**
+ * fpathconf
+ */
+static hg_long_t
+hg_posix_fpathconf(hg_int32_t fildes, hg_int32_t name)
+{
+    return fpathconf(fildes, name);
+}
+
+/**
+ * fsync
+ */
+static hg_int32_t
+hg_posix_fsync(hg_int32_t fd)
+{
+    return fsync(fd);
+}
+
+/**
+ * ftruncate
+ */
+#ifndef HG_POSIX_HAS_FTRUNCATE64
+static hg_int32_t
+hg_posix_ftruncate(hg_int32_t fd, hg_off_t length)
+{
+    return ftruncate(fd, length);
+}
+#else
+static hg_int32_t
+hg_posix_ftruncate64(hg_int32_t fd, hg_off_t length)
+{
+    return ftruncate64(fd, length);
+}
+#endif
+
+/**
+ * lchown
+ */
+static hg_int32_t
+hg_posix_lchown(hg_const_string_t path, hg_uid_t owner, hg_gid_t group)
+{
+    return lchown(path, owner, group);
+}
+
+/**
+ * link
+ */
+static hg_int32_t
+hg_posix_link(hg_const_string_t oldpath, hg_const_string_t newpath)
+{
+    return link(oldpath, newpath);
+}
+
+/**
+ * lockf
+ */
+static hg_int32_t
+hg_posix_lockf(hg_int32_t fildes, hg_int32_t function, hg_off_t size)
+{
+    return lockf(fildes, function, size);
+}
+
+/**
+ * lseek
+ */
+#ifndef HG_POSIX_HAS_LSEEK64
+static hg_off_t
+hg_posix_lseek(hg_int32_t fildes, hg_off_t offset, hg_int32_t whence)
+{
+    return lseek(fildes, offset, whence);
+}
+#else
+static hg_off_t
+hg_posix_lseek64(hg_int32_t fildes, hg_off_t offset, hg_int32_t whence)
+{
+    return lseek64(fildes, offset, whence);
+}
+#endif
+
+/**
+ * mkdir
+ */
+static hg_int32_t
+hg_posix_mkdir(hg_const_string_t path, hg_mode_t mode)
+{
+    return mkdir(path, mode);
+}
+
+/**
+ * mkfifo
+ */
+static hg_int32_t
+hg_posix_mkfifo(hg_const_string_t path, hg_mode_t mode)
+{
+    return mkfifo(path, mode);
+}
+
+/**
+ * mknod
+ */
+static hg_int32_t
+hg_posix_mknod(hg_const_string_t pathname, hg_mode_t mode, hg_dev_t dev)
+{
+    return mknod(pathname, mode, dev);
+}
+
+/**
+ * open
+ */
+#ifndef HG_POSIX_HAS_OPEN64
+static hg_int32_t
+hg_posix_open(hg_const_string_t pathname, hg_int32_t flags, hg_uint32_t mode)
+{
+    return open(pathname, flags, mode);
+}
+#else
+static hg_int32_t
+hg_posix_open64(hg_const_string_t pathname, hg_int32_t flags, hg_uint32_t mode)
+{
+    return open64(pathname, flags, mode);
+}
+#endif
+
+
+/**
  * opendir
  */
 static hg_ptr_t
 hg_posix_opendir(const char *dirname)
 {
     return (hg_ptr_t) opendir(dirname);
+}
+
+/**
+ * pathconf
+ */
+static hg_long_t
+hg_posix_pathconf(hg_const_string_t path, hg_int32_t name)
+{
+    return pathconf(path, name);
 }
 
 /**
@@ -104,6 +336,20 @@ hg_posix_read(hg_int32_t fd, void *buf, hg_uint64_t count)
 }
 
 /**
+ * readdir
+ */
+
+
+/**
+ * rename
+ */
+static hg_int32_t
+hg_posix_rename(hg_const_string_t old, hg_const_string_t new)
+{
+    return rename(old, new);
+}
+
+/**
  * rewinddir
  */
 static hg_uint8_t
@@ -112,6 +358,68 @@ hg_posix_rewinddir(hg_ptr_t dirp)
     rewinddir((DIR*) dirp);
 
     return 1;
+}
+
+/**
+ * rmdir
+ */
+static hg_int32_t
+hg_posix_rmdir(hg_const_string_t pathname)
+{
+    return rmdir(pathname);
+}
+
+/**
+ * sync
+ */
+static void
+hg_posix_sync(void)
+{
+    sync();
+}
+
+/**
+ * symlink
+ */
+static hg_int32_t
+hg_posix_symlink(hg_const_string_t oldpath, hg_const_string_t newpath)
+{
+    return symlink(oldpath, newpath);
+}
+
+/**
+ * truncate
+ */
+#ifndef HG_POSIX_HAS_TRUNCATE64
+static hg_int32_t
+hg_posix_truncate(hg_const_string_t path, hg_off_t length)
+{
+    return truncate(path, length);
+}
+#else
+static hg_int32_t
+hg_posix_truncate64(hg_const_string_t path, hg_off_t length)
+{
+    return truncate64(path, length);
+}
+#endif
+
+/**
+ * umask
+ */
+static hg_mode_t
+hg_posix_umask(hg_mode_t cmask)
+{
+    return umask(cmask);
+}
+
+/**
+ * unlink
+ */
+static hg_int32_t
+hg_posix_unlink(hg_const_string_t pathname)
+{
+    return unlink(pathname);
 }
 
 /**
@@ -131,6 +439,50 @@ hg_posix_write(hg_int32_t fd, void *buf, hg_uint64_t count)
 {
     return write(fd, buf, count);
 }
+
+/* stat wrappers */
+#ifndef HG_POSIX_HAS_FSTAT64
+static hg_int32_t
+hg_posix___fxstat(hg_int32_t __ver, hg_int32_t __fildes, hg_stat_t *__stat_buf)
+{
+    return __fxstat(__ver, __fildes, __stat_buf);
+}
+#else
+static hg_int32_t
+hg_posix___fxstat64(hg_int32_t __ver, hg_int32_t __fildes, hg_stat_t *__stat_buf)
+{
+    return __fxstat64(__ver, __fildes, __stat_buf);
+}
+#endif
+
+#ifndef HG_POSIX_HAS_STAT64
+static hg_int32_t
+hg_posix___xstat(hg_int32_t __ver, hg_const_string_t __filename, hg_stat_t *__stat_buf)
+{
+    return __xstat(__ver, __filename, __stat_buf);
+}
+#else
+static hg_int32_t
+hg_posix___xstat64(hg_int32_t __ver, hg_const_string_t __filename, hg_stat_t *__stat_buf)
+{
+    return __xstat64(__ver, __filename, __stat_buf);
+}
+#endif
+
+#ifndef HG_POSIX_HAS_LSTAT64
+static hg_int32_t
+hg_posix___lxstat(hg_int32_t __ver, hg_const_string_t __filename, hg_stat_t *__stat_buf)
+{
+    return __lxstat(__ver, __filename, __stat_buf);
+}
+#else
+static hg_int32_t
+hg_posix___lxstat64(hg_int32_t __ver, hg_const_string_t __filename, hg_stat_t *__stat_buf)
+{
+    return __lxstat64(__ver, __filename, __stat_buf);
+}
+#endif
+
 
 #define MERCURY_POSIX_SERVER /* Define to generate server stubs */
 #include "mercury_posix_gen.h"
@@ -162,7 +514,7 @@ getcwd_cb(hg_handle_t handle)
     string_out = malloc(size);
 
     /* Call function */
-    MERCURY_HANDLER_GEN_LOG_MESSAGE("getcwd");
+    MERCURY_HANDLER_GEN_LOG_MESSAGE("hg_posix_getcwd");
     string_out = getcwd(string_out, size);
 
     /* Fill output structure */
@@ -185,13 +537,13 @@ done:
  * open
  */
 #ifndef HG_POSIX_HAS_OPEN64
-MERCURY_HANDLER_GEN_CALLBACK_STUB(open_cb, open,
+MERCURY_HANDLER_GEN_CALLBACK_STUB(open_cb, hg_posix_open,
         MERCURY_GEN_TRUE, hg_int32_t,
         MERCURY_GEN_TRUE, open_in_t, open_in_params,
         MERCURY_GEN_FALSE, open_out_t, ,
         MERCURY_GEN_FALSE, )
 #else
-MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, open64,
+MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, hg_posix_open64,
         MERCURY_GEN_TRUE, hg_int32_t,
         MERCURY_GEN_TRUE, open_in_t, open_in_params,
         MERCURY_GEN_FALSE, open_out_t, ,
@@ -221,7 +573,7 @@ readdir_cb(hg_handle_t handle)
     dirp = (DIR*) in_struct.dirp;
 
     /* Call function */
-    MERCURY_HANDLER_GEN_LOG_MESSAGE("readdir");
+    MERCURY_HANDLER_GEN_LOG_MESSAGE("hg_posix_readdir");
 #ifndef HG_POSIX_HAS_READDIR64
     direntp = readdir(dirp);
 #else
@@ -229,11 +581,19 @@ readdir_cb(hg_handle_t handle)
 #endif
 
     /* Fill output structure */
-    out_struct.dirent_out.d_ino = direntp->d_ino;
-    out_struct.dirent_out.d_off = direntp->d_off;
-    out_struct.dirent_out.d_reclen = direntp->d_reclen;
-    out_struct.dirent_out.d_type = direntp->d_type;
-    out_struct.dirent_out.d_name = direntp->d_name;
+    if (direntp) {
+        out_struct.dirent_out.d_ino = direntp->d_ino;
+        out_struct.dirent_out.d_off = direntp->d_off;
+        out_struct.dirent_out.d_reclen = direntp->d_reclen;
+        out_struct.dirent_out.d_type = direntp->d_type;
+        out_struct.dirent_out.d_name = direntp->d_name;
+    } else {
+        out_struct.dirent_out.d_ino = 0;
+        out_struct.dirent_out.d_off = 0;
+        out_struct.dirent_out.d_reclen = 0;
+        out_struct.dirent_out.d_type = 0;
+        out_struct.dirent_out.d_name = '\0';
+    }
 
     /* Free handle and send response back */
     hg_ret = HG_Handler_start_output(handle, &out_struct);
@@ -251,7 +611,7 @@ done:
     (access) \
     (chmod) \
     (chown) \
-    (hg_posix_close) \
+    (close) \
     (dup) \
     (dup2) \
     (fchdir) \
@@ -260,33 +620,33 @@ done:
     (fdatasync) \
     (fpathconf) \
     (fsync) \
-    (hg_posix_closedir) \
+    (closedir) \
     (lchown) \
     (link) \
     (lockf) \
     (mkdir) \
     (mkfifo) \
     (mknod) \
-    (hg_posix_opendir) \
+    (opendir) \
     (pathconf) \
-    (hg_posix_pipe) \
-    (hg_posix_read) \
+    (pipe) \
+    (read) \
     (rename) \
-    (hg_posix_rewinddir) \
+    (rewinddir) \
     (rmdir) \
     (symlink) \
     (umask) \
     (unlink) \
-    (hg_posix_utime) \
-    (hg_posix_write)
+    (utime) \
+    (write)
 
 #ifndef HG_POSIX_HAS_OPEN64
 #define LARGE_FILE_REGISTER_SEQ \
     (creat) \
     (ftruncate) \
     (lseek) \
-    (hg_posix_pread) \
-    (hg_posix_pwrite) \
+    (pread) \
+    (pwrite) \
     (truncate) \
     (__fxstat) \
     (__xstat) \
@@ -296,8 +656,8 @@ done:
     (creat64) \
     (ftruncate64) \
     (lseek64) \
-    (hg_posix_pread64) \
-    (hg_posix_pwrite64) \
+    (pread64) \
+    (pwrite64) \
     (truncate64) \
     (__fxstat64) \
     (__xstat64) \
@@ -313,14 +673,14 @@ register_posix(void)
     BOOST_PP_SEQ_FOR_EACH(MERCURY_POSIX_HANDLER_REGISTER_SEQ, ,
             REGISTER_SEQ LARGE_FILE_REGISTER_SEQ);
 
-    MERCURY_HANDLER_REGISTER("getcwd", getcwd_cb, getcwd_in_t, getcwd_out_t);
+    MERCURY_HANDLER_REGISTER("hg_posix_getcwd", getcwd_cb, getcwd_in_t, getcwd_out_t);
 #ifndef HG_POSIX_HAS_OPEN64
-    MERCURY_HANDLER_REGISTER("open", open_cb, open_in_t, open_out_t);
+    MERCURY_HANDLER_REGISTER("hg_posix_open", open_cb, open_in_t, open_out_t);
 #else
-    MERCURY_HANDLER_REGISTER("open64", open64_cb, open_in_t, open_out_t);
+    MERCURY_HANDLER_REGISTER("hg_posix_open64", open64_cb, open_in_t, open_out_t);
 #endif
-    MERCURY_HANDLER_REGISTER("readdir", readdir_cb, readdir_in_t, readdir_out_t);
-    MERCURY_HANDLER_REGISTER("sync", sync_cb, void, void);
+    MERCURY_HANDLER_REGISTER("hg_posix_readdir", readdir_cb, readdir_in_t, readdir_out_t);
+    MERCURY_HANDLER_REGISTER("hg_posix_sync", sync_cb, void, void);
 }
 
 /******************************************************************************/
@@ -331,6 +691,11 @@ main(int argc, char *argv[])
     int hg_ret, na_ret;
 
     /* Used by Test Driver */
+#ifdef HG_POSIX_HAS_OPEN64
+    printf("Running with large file support\n");
+#else
+    printf("Running without large file support\n");
+#endif
     printf("Waiting for client...\n");
     fflush(stdout);
     setvbuf(stdout, NULL, _IONBF, 0);

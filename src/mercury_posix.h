@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 HG_POSIX_EXPORT int access(const char *pathname, int mode);
-HG_POSIX_EXPORT int chdir(const char *path);
+//HG_POSIX_EXPORT int chdir(const char *path);
 HG_POSIX_EXPORT int chmod(const char *path, mode_t mode);
 HG_POSIX_EXPORT int chown(const char *path, uid_t owner, gid_t group);
 #ifndef HG_POSIX_HAS_CREAT64
@@ -88,7 +88,7 @@ HG_POSIX_EXPORT struct dirent64 *readdir64(DIR *dirp);
 #endif
 //HG_POSIX_EXPORT int readdir_r(DIR *restrict dirp, struct dirent *restrict entry,
 //       struct dirent **restrict result);
-ssize_t readlink(const char *path, char *buf, size_t bufsiz);
+//ssize_t readlink(const char *path, char *buf, size_t bufsiz);
 HG_POSIX_EXPORT int rename(const char *old, const char *new);
 HG_POSIX_EXPORT void rewinddir(DIR *dirp);
 HG_POSIX_EXPORT int rmdir(const char *pathname);

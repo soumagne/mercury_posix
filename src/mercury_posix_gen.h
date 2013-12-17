@@ -54,13 +54,13 @@ MERCURY_POSIX_GEN_STUB(creat64,
 #endif
 
 /* close */
-MERCURY_POSIX_GEN_STUB(hg_posix_close,
+MERCURY_POSIX_GEN_STUB(close,
         hg_int32_t,
         (hg_int32_t),
 )
 
 /* closedir */
-MERCURY_POSIX_GEN_STUB(hg_posix_closedir,
+MERCURY_POSIX_GEN_STUB(closedir,
         hg_int32_t,
         (hg_ptr_t),
 )
@@ -220,7 +220,7 @@ hg_proc_open_in_t(hg_proc_t proc, void *data)
 MERCURY_GEN_PROC(open_out_t, ((hg_int32_t)(ret)))
 
 /* opendir */
-MERCURY_POSIX_GEN_STUB(hg_posix_opendir,
+MERCURY_POSIX_GEN_STUB(opendir,
         hg_ptr_t,
         (hg_const_string_t),
 )
@@ -232,21 +232,21 @@ MERCURY_POSIX_GEN_STUB(pathconf,
 )
 
 /* pipe */
-MERCURY_POSIX_GEN_STUB(hg_posix_pipe,
+MERCURY_POSIX_GEN_STUB(pipe,
         hg_int32_t,
         (hg_int32_t)(hg_int32_t),
 )
 
 /* pread */
 #ifndef HG_POSIX_HAS_PREAD64
-MERCURY_POSIX_GEN_BULK_STUB(hg_posix_pread,
+MERCURY_POSIX_GEN_BULK_STUB(pread,
         hg_ssize_t,
         (int32_t)(hg_off_t),
         ,
         MERCURY_GEN_FALSE
 )
 #else
-MERCURY_POSIX_GEN_BULK_STUB(hg_posix_pread64,
+MERCURY_POSIX_GEN_BULK_STUB(pread64,
         hg_ssize_t,
         (int32_t)(hg_off_t),
         ,
@@ -256,14 +256,14 @@ MERCURY_POSIX_GEN_BULK_STUB(hg_posix_pread64,
 
 /* pwrite */
 #ifndef HG_POSIX_HAS_PWRITE64
-MERCURY_POSIX_GEN_BULK_STUB(hg_posix_pwrite,
+MERCURY_POSIX_GEN_BULK_STUB(pwrite,
         hg_ssize_t,
         (int32_t)(hg_off_t),
         ,
         MERCURY_GEN_TRUE
 )
 #else
-MERCURY_POSIX_GEN_BULK_STUB(hg_posix_pwrite64,
+MERCURY_POSIX_GEN_BULK_STUB(pwrite64,
         hg_ssize_t,
         (int32_t)(hg_off_t),
         ,
@@ -272,7 +272,7 @@ MERCURY_POSIX_GEN_BULK_STUB(hg_posix_pwrite64,
 #endif
 
 /* read */
-MERCURY_POSIX_GEN_BULK_STUB(hg_posix_read,
+MERCURY_POSIX_GEN_BULK_STUB(read,
         hg_ssize_t,
         (int32_t),
         ,
@@ -290,7 +290,7 @@ MERCURY_POSIX_GEN_STUB(rename,
 )
 
 /* rewinddir */
-MERCURY_POSIX_GEN_STUB(hg_posix_rewinddir,
+MERCURY_POSIX_GEN_STUB(rewinddir,
         hg_uint8_t,
         (hg_ptr_t),
 )
@@ -336,7 +336,7 @@ MERCURY_POSIX_GEN_STUB(unlink,
 )
 
 /* utime */
-MERCURY_POSIX_GEN_STUB(hg_posix_utime,
+MERCURY_POSIX_GEN_STUB(utime,
         hg_int32_t,
         (hg_const_string_t)(hg_utimbuf_t),
 )
@@ -344,7 +344,7 @@ MERCURY_POSIX_GEN_STUB(hg_posix_utime,
 /**
  * write
  */
-MERCURY_POSIX_GEN_BULK_STUB(hg_posix_write,
+MERCURY_POSIX_GEN_BULK_STUB(write,
         hg_ssize_t,
         (int32_t), ,
         MERCURY_GEN_TRUE
