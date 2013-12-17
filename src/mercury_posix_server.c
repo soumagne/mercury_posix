@@ -541,13 +541,15 @@ MERCURY_HANDLER_GEN_CALLBACK_STUB(open_cb, hg_posix_open,
         MERCURY_GEN_TRUE, hg_int32_t,
         MERCURY_GEN_TRUE, open_in_t, open_in_params,
         MERCURY_GEN_FALSE, open_out_t, ,
-        MERCURY_GEN_FALSE, )
+        MERCURY_GEN_FALSE, ,
+        MERCURY_GEN_TRUE, hg_posix_threadpool_g)
 #else
 MERCURY_HANDLER_GEN_CALLBACK_STUB(open64_cb, hg_posix_open64,
         MERCURY_GEN_TRUE, hg_int32_t,
         MERCURY_GEN_TRUE, open_in_t, open_in_params,
         MERCURY_GEN_FALSE, open_out_t, ,
-        MERCURY_GEN_FALSE, )
+        MERCURY_GEN_FALSE, ,
+        MERCURY_GEN_TRUE, hg_posix_threadpool_g)
 #endif
 
 /**
@@ -715,6 +717,8 @@ main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    hg_thread_pool_init(8, &hg_posix_threadpool_g);
+
     /* Register routine */
     register_posix();
 
@@ -727,6 +731,8 @@ main(int argc, char *argv[])
     }
 
     printf("Finalizing...\n");
+
+    hg_thread_pool_destroy(hg_posix_threadpool_g);
 
     /* Finalize the interface */
     hg_ret = HG_Bulk_finalize();
