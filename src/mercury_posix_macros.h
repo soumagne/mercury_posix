@@ -113,8 +113,8 @@ static hg_thread_pool_t *hg_posix_threadpool_g = NULL;
  *****************************************************************************/
 /* Register func_name */
 #define MERCURY_POSIX_HANDLER_REGISTER(func_name) \
-        MERCURY_HANDLER_REGISTER(BOOST_PP_STRINGIZE(BOOST_PP_CAT(hg_posix_, func_name)), \
-                BOOST_PP_CAT(func_name, _cb), \
-                BOOST_PP_CAT(func_name, _in_t), BOOST_PP_CAT(func_name, _out_t))
+        MERCURY_REGISTER(BOOST_PP_STRINGIZE(BOOST_PP_CAT(hg_posix_, func_name)), \
+                BOOST_PP_CAT(func_name, _in_t), BOOST_PP_CAT(func_name, _out_t), \
+                BOOST_PP_CAT(func_name, _cb))
 
 #endif /* MERCURY_POSIX_MACROS_H */

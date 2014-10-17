@@ -675,14 +675,14 @@ register_posix(void)
     BOOST_PP_SEQ_FOR_EACH(MERCURY_POSIX_HANDLER_REGISTER_SEQ, ,
             REGISTER_SEQ LARGE_FILE_REGISTER_SEQ);
 
-    MERCURY_HANDLER_REGISTER("hg_posix_getcwd", getcwd_cb, getcwd_in_t, getcwd_out_t);
+    MERCURY_REGISTER("hg_posix_getcwd", getcwd_in_t, getcwd_out_t, getcwd_cb);
 #ifndef HG_POSIX_HAS_OPEN64
-    MERCURY_HANDLER_REGISTER("hg_posix_open", open_cb, open_in_t, open_out_t);
+    MERCURY_REGISTER("hg_posix_open", open_in_t, open_out_t, open_cb);
 #else
-    MERCURY_HANDLER_REGISTER("hg_posix_open64", open64_cb, open_in_t, open_out_t);
+    MERCURY_REGISTER("hg_posix_open64", open_in_t, open_out_t, open64_cb);
 #endif
-    MERCURY_HANDLER_REGISTER("hg_posix_readdir", readdir_cb, readdir_in_t, readdir_out_t);
-    MERCURY_HANDLER_REGISTER("hg_posix_sync", sync_cb, void, void);
+    MERCURY_REGISTER("hg_posix_readdir", readdir_in_t, readdir_out_t, readdir_cb);
+    MERCURY_REGISTER("hg_posix_sync", void, void, sync_cb);
 }
 
 /******************************************************************************/
@@ -705,15 +705,9 @@ main(int argc, char *argv[])
     /* Initialize the interface */
     network_class = NA_Initialize(getenv(HG_PORT_NAME), 1);
 
-    hg_ret = HG_Handler_init(network_class);
+    hg_ret = HG_Init(network_class);
     if (hg_ret != HG_SUCCESS) {
         fprintf(stderr, "Could not initialize function shipper handler\n");
-        return EXIT_FAILURE;
-    }
-
-    hg_ret = HG_Bulk_init(network_class);
-    if (hg_ret != HG_SUCCESS) {
-        fprintf(stderr, "Could not initialize bulk data shipper\n");
         return EXIT_FAILURE;
     }
 
@@ -735,13 +729,7 @@ main(int argc, char *argv[])
     hg_thread_pool_destroy(hg_posix_threadpool_g);
 
     /* Finalize the interface */
-    hg_ret = HG_Bulk_finalize();
-    if (hg_ret != HG_SUCCESS) {
-        fprintf(stderr, "Could not finalize bulk data shipper\n");
-        return EXIT_FAILURE;
-    }
-
-    hg_ret = HG_Handler_finalize();
+    hg_ret = HG_Finalize();
     if (hg_ret != HG_SUCCESS) {
         fprintf(stderr, "Could not finalize function shipper handler\n");
         return EXIT_FAILURE;

@@ -371,7 +371,7 @@ getcwd(char *buf, size_t size)
     /* Get server_name if set */
     server_name = getenv(HG_PORT_NAME);
     /* Look up addr id */
-    na_ret = NA_Addr_lookup(network_class, server_name, &addr);
+    na_ret = NA_Addr_lookup_wait(network_class, server_name, &addr);
     if (na_ret != NA_SUCCESS) {
         HG_ERROR_DEFAULT("Could not lookup addr");
         ret = NULL;
@@ -381,7 +381,7 @@ getcwd(char *buf, size_t size)
     /* Check whether call has already been registered or not */
     HG_Registered("getcwd", &func_registered, &id);
     if (!func_registered) {
-        id = MERCURY_REGISTER("hg_posix_getcwd", getcwd_in_t, getcwd_out_t);
+        id = MERCURY_REGISTER("hg_posix_getcwd", getcwd_in_t, getcwd_out_t, NULL);
     }
 
     /* Fill input structure */
@@ -418,6 +418,13 @@ getcwd(char *buf, size_t size)
     hg_ret = HG_Request_free(request);
     if (hg_ret != HG_SUCCESS) {
         HG_ERROR_DEFAULT("Could not free request");
+        ret = NULL;
+        goto done;
+    }
+
+    na_ret = NA_Addr_free(network_class, addr);
+    if (na_ret != NA_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not free addr");
         ret = NULL;
         goto done;
     }
@@ -750,7 +757,7 @@ hg_posix_readdir(DIR *dirp)
     /* Get server_name if set */
     server_name = getenv(HG_PORT_NAME);
     /* Look up addr id */
-    na_ret = NA_Addr_lookup(network_class, server_name, &addr);
+    na_ret = NA_Addr_lookup_wait(network_class, server_name, &addr);
     if (na_ret != NA_SUCCESS) {
         HG_ERROR_DEFAULT("Could not lookup addr");
         ret = NULL;
@@ -760,7 +767,7 @@ hg_posix_readdir(DIR *dirp)
     /* Check whether call has already been registered or not */
     HG_Registered("readdir", &func_registered, &id);
     if (!func_registered) {
-        id = MERCURY_REGISTER("hg_posix_readdir", readdir_in_t, readdir_out_t);
+        id = MERCURY_REGISTER("hg_posix_readdir", readdir_in_t, readdir_out_t, NULL);
     }
 
     /* Fill input structure */
@@ -800,6 +807,13 @@ hg_posix_readdir(DIR *dirp)
     hg_ret = HG_Request_free(request);
     if (hg_ret != HG_SUCCESS) {
         HG_ERROR_DEFAULT("Could not free request");
+        ret = NULL;
+        goto done;
+    }
+
+    na_ret = NA_Addr_free(network_class, addr);
+    if (na_ret != NA_SUCCESS) {
+        HG_ERROR_DEFAULT("Could not free addr");
         ret = NULL;
         goto done;
     }
