@@ -719,7 +719,7 @@ main(int argc, char *argv[])
     while (1) {
         hg_status_t status;
         /* Receive new function calls */
-        hg_ret = HG_Handler_process(10, &status);
+        hg_ret = HG_Handler_process(HG_MAX_IDLE_TIME, &status);
         if (hg_ret == HG_SUCCESS && status) {
         }
     }
