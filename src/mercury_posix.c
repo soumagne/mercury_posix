@@ -353,7 +353,8 @@ getcwd(char *buf, size_t size)
     hg_bool_t hg_initialized;
 
     hg_bool_t func_registered;
-    int hg_ret, na_ret;
+    hg_return_t hg_ret;
+    na_return_t na_ret;
 
     /* Is mercury library initialized */
     HG_Initialized(&hg_initialized, &network_class);
@@ -739,7 +740,8 @@ hg_posix_readdir(DIR *dirp)
     hg_bool_t hg_initialized;
 
     hg_bool_t func_registered;
-    int hg_ret, na_ret;
+    hg_return_t hg_ret;
+    na_return_t na_ret;
 
     /* Is mercury library initialized */
     HG_Initialized(&hg_initialized, &network_class);

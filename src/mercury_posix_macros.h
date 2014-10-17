@@ -15,7 +15,9 @@
 
 #include <mercury_util/mercury_thread_pool.h>
 
+#ifdef MERCURY_POSIX_SERVER
 static hg_thread_pool_t *hg_posix_threadpool_g = NULL;
+#endif
 
 /*****************************************************************************
  * High-level BOOST macros for client/server stub generation
