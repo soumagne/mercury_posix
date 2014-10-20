@@ -594,7 +594,7 @@ readdir_cb(hg_handle_t handle)
         out_struct.dirent_out.d_off = 0;
         out_struct.dirent_out.d_reclen = 0;
         out_struct.dirent_out.d_type = 0;
-        out_struct.dirent_out.d_name = '\0';
+        out_struct.dirent_out.d_name = NULL;
     }
 
     /* Free handle and send response back */
