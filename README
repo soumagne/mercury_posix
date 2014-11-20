@@ -1,7 +1,7 @@
 MERCURY POSIX
 -------------
 
-These are the release notes for Mercury POSIX (as of 12/18/2013).
+These are the release notes for Mercury POSIX (as of 11/20/2014).
 
 WHAT IS MERCURY POSIX?
 
@@ -25,7 +25,7 @@ DOCUMENTATION:
      MERCURY_PORT_NAME:
      Port name/plugin information (IP/port) used to establish a connection with 
      a remote server -- specific to the network transport chosen.
-     E.g. "tcp@bmi://127.0.0.1:22222"
+     E.g. "bmi+tcp://127.0.0.1:22222"
 
 SOFTWARE REQUIREMENTS:
 
@@ -97,7 +97,7 @@ TESTING:
      mpirun -np 1 mercury_posix_server(64)
 
  - Open a second terminal, export MERCURY_PORT_NAME:
-     export MERCURY_PORT_NAME="tcp@bmi://127.0.0.1:22222"
+     export MERCURY_PORT_NAME="bmi+tcp://127.0.0.1:22222"
 
  - In the same terminal, launch the posix client test:
      ./client_posix
