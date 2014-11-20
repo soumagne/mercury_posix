@@ -32,8 +32,8 @@ SOFTWARE REQUIREMENTS:
    Compiling and running Mercury POSIX requires up-to-date versions of various
    software packages. Beware that using excessively old versions of these
    packages can cause indirect errors that are very difficult to track down.
-   Mercury POSIX requires a _well-configured_ Mercury package with BOOST_PP
-   option (Boost preprocessor library) turned on.
+   Mercury POSIX requires a _well-configured_ Mercury package (v0.8.2) with
+   BOOST_PP option (Boost preprocessor library) turned on.
 
 BUILDING:
 
