@@ -191,26 +191,26 @@ MERCURY_POSIX_GEN_STUB(mknod,
 
 HG_GEN_STRUCT(open_in_t, open_in_params)
 
-static HG_INLINE int
+static HG_INLINE hg_return_t
 hg_proc_open_in_t(hg_proc_t proc, void *data)
 {
-    int ret = HG_SUCCESS;
+    hg_return_t ret = HG_SUCCESS;
     open_in_t *struct_data = (open_in_t *) data;
 
     ret = hg_proc_hg_const_string_t(proc, &struct_data->pathname);
     if (ret != HG_SUCCESS) {
-        HG_ERROR_DEFAULT("Proc error");
+        HG_LOG_ERROR("Proc error");
         return ret;
     }
     ret = hg_proc_hg_int32_t(proc, &struct_data->flags);
     if (ret != HG_SUCCESS) {
-        HG_ERROR_DEFAULT("Proc error");
+        HG_LOG_ERROR("Proc error");
         return ret;
     }
     if (struct_data->flags & O_CREAT) {
         ret = hg_proc_hg_uint32_t(proc, &struct_data->mode);
         if (ret != HG_SUCCESS) {
-            HG_ERROR_DEFAULT("Proc error");
+            HG_LOG_ERROR("Proc error");
             return ret;
         }
     }

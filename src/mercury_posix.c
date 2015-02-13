@@ -40,7 +40,7 @@ hg_posix_store_fd(int fd)
     if (!hg_list_find_data(hg_posix_fd_list_g, hg_posix_fd_equal,
             (hg_list_value_t)fd_buf)) {
         if (!hg_list_append(&hg_posix_fd_list_g, (hg_list_value_t)fd_buf)) {
-            HG_ERROR_DEFAULT("Could not append handle to list");
+            HG_LOG_ERROR("Could not append handle to list");
         }
     }
 }
@@ -343,70 +343,45 @@ getcwd(char *buf, size_t size)
     getcwd_in_t in_struct;
     getcwd_out_t out_struct;
     char *ret;
-    na_class_t *network_class;
-    char *server_name;
-    na_addr_t addr;
     hg_id_t id;
-
-    hg_request_t request;
-    hg_status_t status;
-    hg_bool_t hg_initialized;
-
+    hg_handle_t handle;
     hg_bool_t func_registered;
     hg_return_t hg_ret;
-    na_return_t na_ret;
 
-    /* Is mercury library initialized */
-    HG_Initialized(&hg_initialized, &network_class);
-    if (!hg_initialized) {
-        network_class = NA_Initialize(getenv(HG_PORT_NAME), 0);
+    /* Init stack if not initialized */
+    HG_Hl_init(NULL, 0);
 
-        hg_ret = HG_Init(network_class);
-        if (hg_ret != HG_SUCCESS) {
-            HG_ERROR_DEFAULT("Could not initialize function shipper");
-            ret = NULL;
-            goto done;
-        }
+        /* Check whether call has already been registered or not */
+    HG_Registered_rpc(HG_CLASS_DEFAULT, "getcwd", &func_registered, &id);
+    if (!func_registered) {
+        id = MERCURY_REGISTER(HG_CLASS_DEFAULT, "hg_posix_getcwd",
+                getcwd_in_t, getcwd_out_t, NULL);
     }
 
-    /* Get server_name if set */
-    server_name = getenv(HG_PORT_NAME);
-    /* Look up addr id */
-    na_ret = NA_Addr_lookup_wait(network_class, server_name, &addr);
-    if (na_ret != NA_SUCCESS) {
-        HG_ERROR_DEFAULT("Could not lookup addr");
+    /* Create HG handle */
+    hg_ret = HG_Create(HG_CLASS_DEFAULT, HG_CONTEXT_DEFAULT, NA_ADDR_DEFAULT,
+            id, &handle);
+    if (hg_ret != HG_SUCCESS) {
+        HG_LOG_ERROR("Could not create HG handle");
         ret = NULL;
         goto done;
-    }
-
-    /* Check whether call has already been registered or not */
-    HG_Registered("getcwd", &func_registered, &id);
-    if (!func_registered) {
-        id = MERCURY_REGISTER("hg_posix_getcwd", getcwd_in_t, getcwd_out_t, NULL);
     }
 
     /* Fill input structure */
     in_struct.size = size;
 
-    /* Forward call to remote addr and get a new request */
-    hg_ret = HG_Forward(addr, id, &in_struct, &out_struct, &request);
+    /* Forward call to default target */
+    hg_ret = HG_Hl_forward_wait(handle, &in_struct);
     if (hg_ret != HG_SUCCESS) {
-        HG_ERROR_DEFAULT("Could not forward call");
+        HG_LOG_ERROR("Could not forward call");
         ret = NULL;
         goto done;
     }
 
-    /* Wait for call to be executed and return value to be sent back
-     * (Request is freed when the call completes)
-     */
-    hg_ret = HG_Wait(request, HG_MAX_IDLE_TIME, &status);
+    /* Get output */
+    hg_ret = HG_Get_output(handle, &out_struct);
     if (hg_ret != HG_SUCCESS) {
-        HG_ERROR_DEFAULT("Error during wait");
-        ret = NULL;
-        goto done;
-    }
-    if (!status) {
-        HG_ERROR_DEFAULT("Operation did not complete");
+        HG_LOG_ERROR("Could not get output");
         ret = NULL;
         goto done;
     }
@@ -415,17 +390,18 @@ getcwd(char *buf, size_t size)
     strcpy(buf, out_struct.string_out);
     ret = buf;
 
-    /* Free request */
-    hg_ret = HG_Request_free(request);
+    /* Free output */
+    hg_ret = HG_Free_output(handle, &out_struct);
     if (hg_ret != HG_SUCCESS) {
-        HG_ERROR_DEFAULT("Could not free request");
+        HG_LOG_ERROR("Could not free output");
         ret = NULL;
         goto done;
     }
 
-    na_ret = NA_Addr_free(network_class, addr);
-    if (na_ret != NA_SUCCESS) {
-        HG_ERROR_DEFAULT("Could not free addr");
+    /* Destroy handle */
+    hg_ret = HG_Destroy(handle);
+    if (hg_ret != HG_SUCCESS) {
+        HG_LOG_ERROR("Could not destroy HG handle");
         ret = NULL;
         goto done;
     }
@@ -730,70 +706,45 @@ hg_posix_readdir(DIR *dirp)
     readdir_out_t out_struct;
     static struct dirent dirent_ret;
     struct dirent *ret;
-    na_class_t *network_class;
-    char *server_name;
-    na_addr_t addr;
     hg_id_t id;
-
-    hg_request_t request;
-    hg_status_t status;
-    hg_bool_t hg_initialized;
-
+    hg_handle_t handle;
     hg_bool_t func_registered;
     hg_return_t hg_ret;
-    na_return_t na_ret;
 
-    /* Is mercury library initialized */
-    HG_Initialized(&hg_initialized, &network_class);
-    if (!hg_initialized) {
-        network_class = NA_Initialize(getenv(HG_PORT_NAME), 0);
-
-        hg_ret = HG_Init(network_class);
-        if (hg_ret != HG_SUCCESS) {
-            HG_ERROR_DEFAULT("Could not initialize function shipper");
-            ret = NULL;
-            goto done;
-        }
-    }
-
-    /* Get server_name if set */
-    server_name = getenv(HG_PORT_NAME);
-    /* Look up addr id */
-    na_ret = NA_Addr_lookup_wait(network_class, server_name, &addr);
-    if (na_ret != NA_SUCCESS) {
-        HG_ERROR_DEFAULT("Could not lookup addr");
-        ret = NULL;
-        goto done;
-    }
+    /* Init stack if not initialized */
+    HG_Hl_init(NULL, 0);
 
     /* Check whether call has already been registered or not */
-    HG_Registered("readdir", &func_registered, &id);
+    HG_Registered_rpc(HG_CLASS_DEFAULT, "readdir", &func_registered, &id);
     if (!func_registered) {
-        id = MERCURY_REGISTER("hg_posix_readdir", readdir_in_t, readdir_out_t, NULL);
+        id = MERCURY_REGISTER(HG_CLASS_DEFAULT, "hg_posix_readdir",
+                readdir_in_t, readdir_out_t, NULL);
+    }
+
+    /* Create HG handle */
+    hg_ret = HG_Create(HG_CLASS_DEFAULT, HG_CONTEXT_DEFAULT, NA_ADDR_DEFAULT,
+            id, &handle);
+    if (hg_ret != HG_SUCCESS) {
+        HG_LOG_ERROR("Could not create HG handle");
+        ret = NULL;
+        goto done;
     }
 
     /* Fill input structure */
     in_struct.dirp = (hg_ptr_t)dirp;
 
-    /* Forward call to remote addr and get a new request */
-    hg_ret = HG_Forward(addr, id, &in_struct, &out_struct, &request);
+    /* Forward call to default target */
+    hg_ret = HG_Hl_forward_wait(handle, &in_struct);
     if (hg_ret != HG_SUCCESS) {
-        HG_ERROR_DEFAULT("Could not forward call");
+        HG_LOG_ERROR("Could not forward call");
         ret = NULL;
         goto done;
     }
 
-    /* Wait for call to be executed and return value to be sent back
-     * (Request is freed when the call completes)
-     */
-    hg_ret = HG_Wait(request, HG_MAX_IDLE_TIME, &status);
+    /* Get output */
+    hg_ret = HG_Get_output(handle, &out_struct);
     if (hg_ret != HG_SUCCESS) {
-        HG_ERROR_DEFAULT("Error during wait");
-        ret = NULL;
-        goto done;
-    }
-    if (!status) {
-        HG_ERROR_DEFAULT("Operation did not complete");
+        HG_LOG_ERROR("Could not get output");
         ret = NULL;
         goto done;
     }
@@ -805,17 +756,18 @@ hg_posix_readdir(DIR *dirp)
     dirent_ret.d_type = out_struct.dirent_out.d_type;
     strcpy(dirent_ret.d_name, out_struct.dirent_out.d_name);
 
-    /* Free request */
-    hg_ret = HG_Request_free(request);
+    /* Free output */
+    hg_ret = HG_Free_output(handle, &out_struct);
     if (hg_ret != HG_SUCCESS) {
-        HG_ERROR_DEFAULT("Could not free request");
+        HG_LOG_ERROR("Could not free output");
         ret = NULL;
         goto done;
     }
 
-    na_ret = NA_Addr_free(network_class, addr);
-    if (na_ret != NA_SUCCESS) {
-        HG_ERROR_DEFAULT("Could not free addr");
+    /* Destroy handle */
+    hg_ret = HG_Destroy(handle);
+    if (hg_ret != HG_SUCCESS) {
+        HG_LOG_ERROR("Could not destroy HG handle");
         ret = NULL;
         goto done;
     }

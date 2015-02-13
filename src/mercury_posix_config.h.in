@@ -33,7 +33,7 @@
 #ifdef HG_POSIX_HAS_SERVER_LOG
   #include <mercury_util/mercury_time.h>
   #include <stdio.h>
-  #define MERCURY_HANDLER_GEN_LOG_MESSAGE(x) \
+  #define MERCURY_GEN_LOG_MESSAGE(x) \
     printf("%s: Executing %s\n", hg_time_stamp(), x);
 #endif
 

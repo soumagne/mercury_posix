@@ -154,7 +154,7 @@ set(MERCURY_POSIX_SRCS
 #----------------------------------------------------------------------------
 # mercury_posix
 add_library(mercury_posix${HG_POSIX_EXTENSION} ${MERCURY_POSIX_SRCS})
-target_link_libraries(mercury_posix${HG_POSIX_EXTENSION} mercury -ldl)
+target_link_libraries(mercury_posix${HG_POSIX_EXTENSION} mercury_hl -ldl)
 set_lib_options(mercury_posix${HG_POSIX_EXTENSION} "mercury_posix${HG_POSIX_EXTENSION}" ${MERCURY_POSIX_LIBTYPE})
 
 set(MERCURY_EXPORTED_LIBS mercury_posix${HG_POSIX_EXTENSION} ${MERCURY_EXPORTED_LIBS})
@@ -164,7 +164,7 @@ set(MERCURY_EXPORTED_LIBS mercury_posix${HG_POSIX_EXTENSION} ${MERCURY_EXPORTED_
 #----------------------------------------------------------------------------
 # mercury_posix_server
 add_executable(mercury_posix_server${HG_POSIX_EXTENSION} mercury_posix_server.c)
-target_link_libraries(mercury_posix_server${HG_POSIX_EXTENSION} mercury)
+target_link_libraries(mercury_posix_server${HG_POSIX_EXTENSION} mercury_hl)
 
 #-----------------------------------------------------------------------------
 # Specify project header files to be installed
