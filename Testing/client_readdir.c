@@ -1,19 +1,36 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
 
-int main(int argc, char *argv[])
+#define ERRMSG(x) do {                                                  \
+        fprintf( stderr, "ERR %d @ line %d: %s\n", errno, __LINE__, x); \
+        exit(1);                                                        \
+  } while (0)
+
+int
+main(int argc, char *argv[])
 {
-    DIR *dir;
+    DIR *dir = NULL;
     struct dirent *dir_info;
 
-    dir = opendir("/usr");
+    (void) argc;
+    (void) argv;
 
-    printf("0x%lX\n\n", dir);
-    dir_info = readdir(dir);
-    printf("0x%lX\n: %s\n", dir, dir_info->d_name);
+    if (!(dir = opendir("/usr")))
+        ERRMSG( "opendir");
 
-    closedir(dir);
+    do {
+        dir_info = readdir(dir);
+        if (dir_info) {
+            printf("%s\n", dir_info->d_name);
+        }
+    } while (dir_info);
+
+    if (closedir(dir)) {
+        ERRMSG( "closedir");
+    }
 
     return 0;
 }

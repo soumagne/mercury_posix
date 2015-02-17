@@ -754,7 +754,10 @@ hg_posix_readdir(DIR *dirp)
     dirent_ret.d_off = out_struct.dirent_out.d_off;
     dirent_ret.d_reclen = out_struct.dirent_out.d_reclen;
     dirent_ret.d_type = out_struct.dirent_out.d_type;
-    strcpy(dirent_ret.d_name, out_struct.dirent_out.d_name);
+    if (out_struct.dirent_out.d_name)
+        strcpy(dirent_ret.d_name, out_struct.dirent_out.d_name);
+    else
+        memset(dirent_ret.d_name, '\0', sizeof(dirent_ret.d_name));
 
     /* Free output */
     hg_ret = HG_Free_output(handle, &out_struct);
